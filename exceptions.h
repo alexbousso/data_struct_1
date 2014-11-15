@@ -30,4 +30,7 @@ class VersionCodeDoesntExsists: public std::exception {
 class AppIDDoesentExists: public std::exception {
 };
 
+class ListIsEmpty: public std::exception {
+};
+
 #endif /* EXCEPTIONS_H_ */
