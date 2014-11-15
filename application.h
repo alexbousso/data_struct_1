@@ -14,7 +14,7 @@ class Application {
 	int downloadCount;
 
 public:
-	Application(const int appID, int versionCode, int downloadCount);
+	Application(int appID, int versionCode, int downloadCount);
 
 	/**
 	 * Returns the application ID

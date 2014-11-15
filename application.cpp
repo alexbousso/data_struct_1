@@ -8,7 +8,7 @@
 #include "application.h"
 #include "exceptions.h"
 
-inline Application::Application(const int appID, int versionCode,
+inline Application::Application(int appID, int versionCode,
 		int downloadCount) :
 		appID(appID), versionCode(versionCode), downloadCount(downloadCount) {
 	if (appID <= 0 || versionCode <= 0 || downloadCount < 0) {
