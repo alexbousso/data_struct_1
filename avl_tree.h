@@ -15,6 +15,7 @@ class AVLTree {
 	class Node;
 	Node* root;
 	int treeSize;
+
 public:
 	AVLTree() :
 			root(NULL), treeSize(0) {
@@ -22,7 +23,10 @@ public:
 	AVLTree(const AVLTree&);
 	AVLTree operator=(const AVLTree&);
 	~AVLTree();
+
 	class Iterator;
+	Iterator begin();
+	Iterator end();
 
 	//inserting a new object to the tree
 	void insert(T&);
