@@ -9,6 +9,7 @@
 #define LIST_H_
 
 #include <iostream>
+#include "exceptions.h"
 
 template<typename T>
 class List {
@@ -16,14 +17,18 @@ class List {
 	Node *first, *last;
 	int listSize;
 
+	// If the list is empty return ListIsEmpty() exception
+	static void checkEmpty();
+
 public:
 	class Iterator;
 
-	List() :
-			first(NULL), last(NULL), listSize(0) {
-	}
+	List();
 	List(const List&);
-	List operator =(const List&);
+
+	// TODO: Why do we need this??
+//	List operator =(const List&);
+
 	~List();
 
 	// Remove last element from list
@@ -46,7 +51,7 @@ public:
 };
 
 template<typename T>
-class Node {
+class List<T>::Node {
 	T data;
 	Node *next;
 
@@ -56,12 +61,15 @@ class Node {
 	Node(T data) :
 			data(data), next(NULL) {
 	}
-	Node(const Node&);
+
+	// TODO: Why do we need this??
+//	Node(const Node&);
+
 	Node operator =(const Node&);
 };
 
 template<typename T>
-class Iterator {
+class List<T>::Iterator {
 	Node *node;
 
 public:
@@ -75,6 +83,61 @@ public:
 	bool operator ==(const Iterator&) const;
 	bool operator !=(const Iterator&) const;
 };
+
+/*****************************
+ * FUNCTIONS IMPLEMENTATIONS *
+ *****************************/
+
+/**
+ * CLASS LIST
+ */
+
+template<typename T>
+inline List<T>::List() :
+		first(NULL), last(NULL), listSize(0) {
+}
+
+template<typename T>
+inline List<T>::List(const List& copy) :
+		List() {
+	for (auto it = begin(); it != end(); ++it) {
+		pushFront(it->node->data);
+	}
+}
+
+template<typename T>
+inline List<T>::~List() {
+	for (auto it(begin()); it != end(); ++it) {
+		delete &(*it);
+	}
+}
+
+template<typename T>
+inline void List<T>::popBack() {
+	checkEmpty();
+	for (auto it(begin()); it != end; ++it) {
+		if (it->next == last) {
+			delete last;
+			it->next = NULL;
+			last = &(*it);
+			return;
+		}
+	}
+}
+
+/**
+ * CLASS NODE
+ */
+
+template<typename T>
+Node Node<T>::operator =(const Node& other) {
+	data = other.data;
+	return *this;
+}
+
+/**
+ * CLASS ITERATOR
+ */
 
 #endif /* LIST_H_ */
 
