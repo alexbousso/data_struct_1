@@ -33,4 +33,7 @@ class AppIDDoesentExists: public std::exception {
 class ListIsEmpty: public std::exception {
 };
 
+class IndexOutOfBounds: public std::exception {
+};
+
 #endif /* EXCEPTIONS_H_ */
