@@ -35,13 +35,13 @@ public:
 	void popBack();
 
 	// Add element to the end of the list
-	void pushBack(const T&);
+	void pushBack(const T& data);
 
 	// Remove first element from list
 	void popFront();
 
 	// Add element to the front of the list
-	void pushFront(const T&);
+	void pushFront(const T& data);
 
 	Iterator begin();
 	Iterator end();
@@ -53,13 +53,13 @@ public:
 template<typename T>
 class List<T>::Node {
 	T data;
-	typename List<T>::Node *next;
+	typename List<T>::Node *next, *previous;
 
 	friend class List;
 	friend class Iterator;
 
 	Node(T data) :
-			data(data), next(NULL) {
+			data(data), next(NULL), previous(NULL) {
 	}
 
 	// QUESTION: Why do we need these??
@@ -94,13 +94,15 @@ public:
 template<typename T>
 inline List<T>::List() :
 		first(new List<T>::Node), last(first), listSize(0) {
+	first->next = last;
+	last->previous = first;
 }
 
 template<typename T>
 inline List<T>::List(const List& copy) :
 		List() {
 	for (auto it = begin(); it != end(); ++it) {
-		pushFront(it->node->data);
+		pushBack(it->node->data);
 	}
 }
 
@@ -112,23 +114,24 @@ inline List<T>::~List() {
 	delete &(*end());
 }
 
-// FIXME: handle dummy in the end of the list!
 template<typename T>
 void List<T>::popBack() {
 	checkEmpty();
-	for (auto it(begin()); it != end; ++it) {
-		if (it->next == last) {
-			delete last;
-			it->next = NULL;
-			last = &(*it);
-			return;
-		}
-	}
+
+	List<T>::Node toDelete = last->previous;
+	last->previous = last->previous->previous;
+	last->previous->prevoius->next = last->previous->next;
+	delete toDelete;
 }
 
 template<typename T>
-void List<T>::pushBack(const T&) {
-// TODO
+void List<T>::pushBack(const T& data) {
+	List<T>::Node* newNode(new List<T>::Node(data));
+
+	last->previous->next = newNode;
+	newNode->previous = last->previous;
+	newNode->next = last;
+	last->previous = newNode;
 }
 
 /**
