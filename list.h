@@ -53,7 +53,7 @@ public:
 template<typename T>
 class List<T>::Node {
 	T data;
-	Node *next;
+	typename List<T>::Node *next;
 
 	friend class List;
 	friend class Iterator;
@@ -62,24 +62,23 @@ class List<T>::Node {
 			data(data), next(NULL) {
 	}
 
-	// QUESTION: Why do we need this??
+	// QUESTION: Why do we need these??
 //	Node(const Node&);
-
-	Node operator =(const Node&);
+//	Node operator =(const Node&);
 };
 
 template<typename T>
 class List<T>::Iterator {
-	Node *node;
+	Node<T> *node;
 
 public:
 	Iterator(Node<T>* node) :
 			node(node) {
 	}
-	Iterator& operator ++();
-	Iterator operator ++(int);
-	Node<T>& operator *() const;
-	Node<T>* operator ->() const;
+	typename List<T>::Iterator& operator ++();
+	typename List<T>::Iterator operator ++(int);
+	typename List<T>::Node& operator *() const;
+	typename List<T>::Node* operator ->() const;
 	bool operator ==(const Iterator&) const;
 	bool operator !=(const Iterator&) const;
 };
@@ -94,7 +93,7 @@ public:
 
 template<typename T>
 inline List<T>::List() :
-		first(NULL), last(NULL), listSize(0) {
+		first(new List<T>::Node), last(first), listSize(0) {
 }
 
 template<typename T>
@@ -110,10 +109,12 @@ inline List<T>::~List() {
 	for (auto it(begin()); it != end(); ++it) {
 		delete &(*it);
 	}
+	delete &(*end());
 }
 
+// FIXME: handle dummy in the end of the list!
 template<typename T>
-inline void List<T>::popBack() {
+void List<T>::popBack() {
 	checkEmpty();
 	for (auto it(begin()); it != end; ++it) {
 		if (it->next == last) {
@@ -125,19 +126,60 @@ inline void List<T>::popBack() {
 	}
 }
 
+template<typename T>
+void List<T>::pushBack(const T&) {
+// TODO
+}
+
 /**
  * CLASS NODE
  */
 
-template<typename T>
-Node Node<T>::operator =(const Node& other) {
-	data = other.data;
-	return *this;
-}
-
+// QUESTION: Why do we need this?
+//template<typename T>
+//inline Node Node<T>::operator =(const Node& other) {
+//	data = other.data;
+//	return *this;
+//}
 /**
  * CLASS ITERATOR
  */
+
+template<typename T>
+inline typename List<T>::Iterator& List<T>::Iterator::operator ++() {
+	if (!List<T>::Node::node->next) {
+		throw IndexOutOfBounds();
+	}
+	node = List<T>::Node::node->next;
+	return *this;
+}
+
+template<typename T>
+inline typename List<T>::Iterator List<T>::Iterator::operator ++(int) {
+	Iterator temp(node);
+	++(*this);
+	return temp;
+}
+
+template<typename T>
+inline typename List<T>::Node& List<T>::Iterator::operator *() const {
+	return *node;
+}
+
+template<typename T>
+inline typename List<T>::Node* List<T>::Iterator::operator ->() const {
+	return node;
+}
+
+template<typename T>
+inline bool List<T>::Iterator::operator ==(const Iterator& it) const {
+	return List<T>::Node::node == &(*it);
+}
+
+template<typename T>
+inline bool List<T>::Iterator::operator !=(const Iterator& it) const {
+	return !(*this == it);
+}
 
 #endif /* LIST_H_ */
 
