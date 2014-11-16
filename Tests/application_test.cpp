@@ -29,10 +29,10 @@ static bool testGetDownloadCount() {
 static bool testIncreaseDownloads() {
 	Application app(1, 2, 3);
 	ASSERT_NO_THROW(app.increaseDownloads(1));
-	ASSERT_EQUALS(app.getDownloadCount(), 3);
+	ASSERT_EQUALS(app.getDownloadCount(), 4);
 	ASSERT_INVALID_INPUT(app.increaseDownloads(0));
 	ASSERT_INVALID_INPUT(app.increaseDownloads(-10));
-	ASSERT_EQUALS(app.getDownloadCount(), 3);
+	ASSERT_EQUALS(app.getDownloadCount(), 4);
 
 	return true;
 }

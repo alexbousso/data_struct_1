@@ -26,7 +26,7 @@ public:
 	List();
 	List(const List&);
 
-	// TODO: Why do we need this??
+	// QUESTION: Why do we need this??
 //	List operator =(const List&);
 
 	~List();
@@ -62,7 +62,7 @@ class List<T>::Node {
 			data(data), next(NULL) {
 	}
 
-	// TODO: Why do we need this??
+	// QUESTION: Why do we need this??
 //	Node(const Node&);
 
 	Node operator =(const Node&);
