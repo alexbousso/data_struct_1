@@ -25,7 +25,9 @@ public:
 	int getCode(){
 		return versionCode;
 	}
-
+	void versionAddApp(Application app);
+	void versionRemoveApp(int appID);
+	//TODO: think of more funcs
 };
 
 
