@@ -18,6 +18,12 @@ class AllocationError: public std::exception {
 class InvalidInput: public std::exception {
 };
 
+class InputAlreadyExists: public std::exception {
+};
+
+class DataDoesNotExist: public std::exception {
+};
+
 class AppIDExists: public std::exception {
 };
 
