@@ -39,6 +39,8 @@ tmp/
 local.properties
 .settings/
 .loadpath
+*.xml
+data_struct_1
 
 # External tool builders
 .externalToolBuilders/
@@ -47,7 +49,7 @@ local.properties
 *.launch
 
 # CDT-specific
-.cproject
+*.cproject*
 
 # PDT-specific
 .buildpath

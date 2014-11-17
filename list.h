@@ -19,7 +19,7 @@ class List {
 	int listSize;
 
 	// If the list is empty return ListIsEmpty() exception
-	static void checkEmpty();
+	void checkEmpty();
 
 public:
 	class Iterator;
@@ -44,6 +44,10 @@ public:
 	// Add element to the front of the list
 	void pushFront(const T& data);
 
+	// Returns the data at the given index
+	T& at(const int index);
+	T& operator [](const int index);
+
 	Iterator begin();
 	Iterator end();
 
@@ -58,6 +62,10 @@ class List<T>::Node {
 
 	friend class List;
 	friend class Iterator;
+
+	Node() :
+			data(), next(NULL), previous(NULL) {
+	}
 
 	Node(T data) :
 			data(data), next(NULL), previous(NULL) {
@@ -122,7 +130,7 @@ void List<T>::popBack() {
 	checkEmpty();
 	assert(listSize > 0);
 
-	List<T>::Node toDelete = last->previous;
+	List<T>::Node* toDelete(last->previous);
 	last->previous = last->previous->previous;
 	last->previous->prevoius->next = last->previous->next;
 	delete toDelete;
@@ -145,7 +153,7 @@ void List<T>::popFront() {
 	checkEmpty();
 	assert(listSize > 0);
 
-	List<T>::Node toDelete = first->next;
+	List<T>::Node* toDelete(first->next);
 	first = first->next;
 	first->next->previous = NULL;
 	delete toDelete;
@@ -178,6 +186,33 @@ inline int List<T>::size() const {
 	return listSize;
 }
 
+template<typename T>
+inline void List<T>::checkEmpty() {
+	if (first == last) {
+		throw ListIsEmpty();
+	}
+}
+
+template<typename T>
+T& List<T>::at(const int index) {
+	if (index < 0 || index > listSize - 1) {
+		throw IndexOutOfBounds();
+	}
+
+	return this[index];
+}
+
+template<typename T>
+T& List<T>::operator [](const int index) {
+	List<T>::Iterator it(begin());
+
+	for (int i(0); i < index; ++i) {
+		++it;
+	}
+
+	return *it;
+}
+
 /**
  * CLASS NODE
  */
@@ -194,10 +229,10 @@ inline int List<T>::size() const {
 
 template<typename T>
 inline typename List<T>::Iterator& List<T>::Iterator::operator ++() {
-	if (!List<T>::Node::node->next) {
+	if (!node->next) {
 		throw IndexOutOfBounds();
 	}
-	node = List<T>::Node::node->next;
+	node = node->next;
 	return *this;
 }
 
