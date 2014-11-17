@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include "exceptions.h"
+#include <cassert>		// For assert
 
 template<typename T>
 class List {
@@ -69,10 +70,10 @@ class List<T>::Node {
 
 template<typename T>
 class List<T>::Iterator {
-	Node<T> *node;
+	typename List<T>::Node *node;
 
 public:
-	Iterator(Node<T>* node) :
+	Iterator(typename List<T>::Node* node) :
 			node(node) {
 	}
 	typename List<T>::Iterator& operator ++();
@@ -108,20 +109,24 @@ inline List<T>::List(const List& copy) :
 
 template<typename T>
 inline List<T>::~List() {
-	for (auto it(begin()); it != end(); ++it) {
-		delete &(*it);
+	while (listSize > 0) {
+		popFront();
 	}
-	delete &(*end());
+	assert(last == first);
+	delete last;
+	last = first = NULL;
 }
 
 template<typename T>
 void List<T>::popBack() {
 	checkEmpty();
+	assert(listSize > 0);
 
 	List<T>::Node toDelete = last->previous;
 	last->previous = last->previous->previous;
 	last->previous->prevoius->next = last->previous->next;
 	delete toDelete;
+	listSize--;
 }
 
 template<typename T>
@@ -132,6 +137,45 @@ void List<T>::pushBack(const T& data) {
 	newNode->previous = last->previous;
 	newNode->next = last;
 	last->previous = newNode;
+	listSize++;
+}
+
+template<typename T>
+void List<T>::popFront() {
+	checkEmpty();
+	assert(listSize > 0);
+
+	List<T>::Node toDelete = first->next;
+	first = first->next;
+	first->next->previous = NULL;
+	delete toDelete;
+	listSize--;
+}
+
+template<typename T>
+void List<T>::pushFront(const T& data) {
+	List<T>::Node* newNode(new List<T>::Node(data));
+
+	newNode->next = first;
+	first->next->previous = newNode;
+	newNode->previous = NULL;
+	first = newNode;
+	listSize++;
+}
+
+template<typename T>
+inline typename List<T>::Iterator List<T>::begin() {
+	return first;
+}
+
+template<typename T>
+inline typename List<T>::Iterator List<T>::end() {
+	return last;
+}
+
+template<typename T>
+inline int List<T>::size() const {
+	return listSize;
 }
 
 /**
