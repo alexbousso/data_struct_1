@@ -29,4 +29,7 @@
 #define ASSERT_LIST_IS_EMPTY(arg) \
 	ASSERT_THROWS(ListIsEmpty, arg)
 
+#define ASSERT_INDEX_OUT_OF_BOUNDS(arg) \
+	ASSERT_THROWS(IndexOutOfBounds, arg)
+
 #endif /* ASSERT_H_ */

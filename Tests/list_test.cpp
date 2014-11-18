@@ -70,10 +70,63 @@ static bool testListPopFront() {
 	return true;
 }
 
+static bool testListPushFront() {
+	List<int> list;
+
+	list.pushFront(2);
+	ASSERT_EQUALS(list[0], 2);
+	list.pushFront(3);
+	ASSERT_EQUALS(list[1], 2);
+	ASSERT_EQUALS(list[0], 3);
+
+	return true;
+}
+
+static bool testListAt() {
+	List<int> list;
+
+	ASSERT_INDEX_OUT_OF_BOUNDS(list.at(0));
+	ASSERT_NO_THROW(list[0]);
+
+	setUp(list);
+
+	ASSERT_EQUALS(list[3], 3);
+	ASSERT_EQUALS(list.at(5), 5);
+	ASSERT_INDEX_OUT_OF_BOUNDS(list.at(6));
+	ASSERT_INDEX_OUT_OF_BOUNDS(list.at(-1));
+	ASSERT_NO_THROW(list[6]);
+	ASSERT_NO_THROW(list[-1]);
+
+	return true;
+}
+
+static bool testListSize() {
+	// TODO: Add tests
+
+	return true;
+}
+
+static bool testListReset() {
+	// TODO: Add tests
+
+	return true;
+}
+
+static bool testListIterator() {
+	// TODO: Add tests
+
+	return true;
+}
+
 int main() {
 	RUN_TEST(testListPopBack);
 	RUN_TEST(testListPushBack);
 	RUN_TEST(testListPopFront);
+	RUN_TEST(testListPushFront);
+	RUN_TEST(testListAt);
+	RUN_TEST(testListSize);
+	RUN_TEST(testListReset);
+	RUN_TEST(testListIterator);
 
 	return 0;
 }

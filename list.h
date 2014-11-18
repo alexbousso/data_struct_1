@@ -229,7 +229,7 @@ T& List<T>::at(const int index) const {
 		throw IndexOutOfBounds();
 	}
 
-	return this[index];
+	return (*this)[index];
 }
 
 template<typename T>
