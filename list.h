@@ -47,11 +47,17 @@ public:
 	void pushFront(const T& data);
 
 	// Returns the data at the given index
-	T& at(const int index);
-	T& operator [](const int index);
+	T& at(const int index) const;
+	T& operator [](const int index) const;
 
 	// Returns the size of the list
 	int size() const;
+
+	// Resets the entire list
+	void reset();
+
+private:
+	Iterator begin() const;
 };
 
 template<typename T>
@@ -114,10 +120,7 @@ inline List<T>::List(const List& copy) :
 
 template<typename T>
 inline List<T>::~List() {
-	while (listSize > 0) {
-		popFront();
-	}
-	assert(last == first);
+	reset();
 	delete last;
 	last = first = nullptr;
 }
@@ -129,7 +132,7 @@ void List<T>::popBack() {
 
 	List<T>::Node* toDelete(last->previous);
 	last->previous = last->previous->previous;
-	last->previous->next = last;
+	listSize == 1 ? first = last : last->previous->next = last;
 	delete toDelete;
 	listSize--;
 }
@@ -185,6 +188,11 @@ inline typename List<T>::Iterator List<T>::begin() {
 }
 
 template<typename T>
+inline typename List<T>::Iterator List<T>::begin() const {
+	return first;
+}
+
+template<typename T>
 inline typename List<T>::Iterator List<T>::end() {
 	return last;
 }
@@ -213,7 +221,7 @@ inline void List<T>::pushFirstNode(List<T>::Node* node) {
 }
 
 template<typename T>
-T& List<T>::at(const int index) {
+T& List<T>::at(const int index) const {
 	if (index < 0 || index > listSize - 1) {
 		throw IndexOutOfBounds();
 	}
@@ -222,14 +230,22 @@ T& List<T>::at(const int index) {
 }
 
 template<typename T>
-T& List<T>::operator [](const int index) {
+T& List<T>::operator [](const int index) const {
 	List<T>::Iterator it(begin());
 
-	for (int i(1); i < index; ++i) {
+	for (int i(0); i < index; ++i) {
 		++it;
 	}
 
 	return it->data;
+}
+
+template<typename T>
+void List<T>::reset() {
+	while (listSize > 0) {
+		popFront();
+	}
+	assert(last == first);
 }
 
 /**
