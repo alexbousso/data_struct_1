@@ -31,10 +31,7 @@ public:
 
 	List();
 	List(const List&);
-
-	// QUESTION: Why do we need this??
-//	List operator =(const List&);
-
+	List operator =(const List&);
 	~List();
 
 	// Remove last element from list
@@ -58,7 +55,7 @@ public:
 };
 
 template<typename T>
-class List<T>::Node {
+class Node {
 	T data;
 	typename List<T>::Node *next, *previous;
 
@@ -72,10 +69,8 @@ class List<T>::Node {
 	Node(T data) :
 			data(data), next(nullptr), previous(nullptr) {
 	}
-
-	// QUESTION: Why do we need these??
-//	Node(const Node&);
-//	Node operator =(const Node&);
+	Node(const Node&);
+	Node operator =(const Node&);
 };
 
 template<typename T>
@@ -86,10 +81,10 @@ public:
 	Iterator(typename List<T>::Node* node) :
 			node(node) {
 	}
-	typename List<T>::Iterator& operator ++();
-	typename List<T>::Iterator operator ++(int);
-	typename List<T>::Node& operator *() const;
-	typename List<T>::Node* operator ->() const;
+	Iterator& operator ++();
+	Iterator operator ++(int);
+	Node<T>& operator *() const;
+	Node<T>* operator ->() const;
 	bool operator ==(const Iterator&) const;
 	bool operator !=(const Iterator&) const;
 };
