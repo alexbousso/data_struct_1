@@ -8,7 +8,6 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include <iostream>
 #include "exceptions.h"
 #include <cassert>		// For assert
 
@@ -21,8 +20,14 @@ class List {
 	// If the list is empty return ListIsEmpty() exception
 	void checkEmpty();
 
+	// Pushes the first node in the list
+	void pushFirstNode(List<T>::Node*);
+
 public:
 	class Iterator;
+
+	Iterator begin();
+	Iterator end();
 
 	List();
 	List(const List&);
@@ -48,9 +53,6 @@ public:
 	T& at(const int index);
 	T& operator [](const int index);
 
-	Iterator begin();
-	Iterator end();
-
 	// Returns the size of the list
 	int size() const;
 };
@@ -64,11 +66,11 @@ class List<T>::Node {
 	friend class Iterator;
 
 	Node() :
-			data(), next(NULL), previous(NULL) {
+			data(), next(nullptr), previous(nullptr) {
 	}
 
 	Node(T data) :
-			data(data), next(NULL), previous(NULL) {
+			data(data), next(nullptr), previous(nullptr) {
 	}
 
 	// QUESTION: Why do we need these??
@@ -103,8 +105,8 @@ public:
 template<typename T>
 inline List<T>::List() :
 		first(new List<T>::Node), last(first), listSize(0) {
-	first->next = last;
-	last->previous = first;
+	first->next = nullptr;
+	last->previous = nullptr;
 }
 
 template<typename T>
@@ -122,7 +124,7 @@ inline List<T>::~List() {
 	}
 	assert(last == first);
 	delete last;
-	last = first = NULL;
+	last = first = nullptr;
 }
 
 template<typename T>
@@ -132,7 +134,7 @@ void List<T>::popBack() {
 
 	List<T>::Node* toDelete(last->previous);
 	last->previous = last->previous->previous;
-	last->previous->prevoius->next = last->previous->next;
+	last->previous->next = last;
 	delete toDelete;
 	listSize--;
 }
@@ -141,6 +143,12 @@ template<typename T>
 void List<T>::pushBack(const T& data) {
 	List<T>::Node* newNode(new List<T>::Node(data));
 
+	if (listSize == 0) {
+		pushFirstNode(newNode);
+		return;
+	}
+
+	assert(listSize > 0);
 	last->previous->next = newNode;
 	newNode->previous = last->previous;
 	newNode->next = last;
@@ -153,9 +161,9 @@ void List<T>::popFront() {
 	checkEmpty();
 	assert(listSize > 0);
 
-	List<T>::Node* toDelete(first->next);
+	List<T>::Node* toDelete(first);
 	first = first->next;
-	first->next->previous = NULL;
+	first->previous = nullptr;
 	delete toDelete;
 	listSize--;
 }
@@ -164,9 +172,14 @@ template<typename T>
 void List<T>::pushFront(const T& data) {
 	List<T>::Node* newNode(new List<T>::Node(data));
 
+	if (listSize == 0) {
+		pushFirstNode(newNode);
+		return;
+	}
+
 	newNode->next = first;
 	first->next->previous = newNode;
-	newNode->previous = NULL;
+	newNode->previous = nullptr;
 	first = newNode;
 	listSize++;
 }
@@ -194,6 +207,17 @@ inline void List<T>::checkEmpty() {
 }
 
 template<typename T>
+inline void List<T>::pushFirstNode(List<T>::Node* node) {
+	assert(first == last && listSize == 0);
+
+	first = node;
+	node->previous = nullptr;
+	node->next = last;
+	last->previous = node;
+	listSize++;
+}
+
+template<typename T>
 T& List<T>::at(const int index) {
 	if (index < 0 || index > listSize - 1) {
 		throw IndexOutOfBounds();
@@ -206,11 +230,11 @@ template<typename T>
 T& List<T>::operator [](const int index) {
 	List<T>::Iterator it(begin());
 
-	for (int i(0); i < index; ++i) {
+	for (int i(1); i < index; ++i) {
 		++it;
 	}
 
-	return *it;
+	return it->data;
 }
 
 /**
