@@ -1,4 +1,3 @@
-
 #include "../list.h"
 #include "assert.h"
 #include <string>
@@ -16,6 +15,19 @@ static void setUp(List<int>& list) {
 	list.pushBack(5);
 }
 
+static bool testListCopyConstructor() {
+	List<int> list, copy;
+	setUp(list);
+
+	copy = list;
+	list[2] = 0;
+	ASSERT_EQUALS(copy[2], 2);
+	copy[3] = 0;
+	ASSERT_EQUALS(list[3], 3);
+
+	return true;
+}
+
 static bool testListPopBack() {
 	List<int> list;
 
@@ -28,9 +40,7 @@ static bool testListPopBack() {
 	ASSERT_EQUALS(list[0], 3);
 	ASSERT_EQUALS(list[NUMBER_OF_ELEMENTS - 2], 4);
 
-	while (list.size() > 0) {
-		ASSERT_NO_THROW(list.popBack());
-	}
+	list.reset();
 	ASSERT_LIST_IS_EMPTY(list.popBack());
 
 	return true;
@@ -62,9 +72,7 @@ static bool testListPopFront() {
 	list.popFront();
 	ASSERT_EQUALS(list[0], 2);
 
-	while (list.size() > 0) {
-		ASSERT_NO_THROW(list.popFront());
-	}
+	list.reset();
 	ASSERT_LIST_IS_EMPTY(list.popFront());
 
 	return true;
@@ -101,24 +109,58 @@ static bool testListAt() {
 }
 
 static bool testListSize() {
-	// TODO: Add tests
+	List<int> list;
+
+	ASSERT_EQUALS(list.size(), 0);
+	setUp(list);
+	ASSERT_EQUALS(list.size(), NUMBER_OF_ELEMENTS);
 
 	return true;
 }
 
 static bool testListReset() {
-	// TODO: Add tests
+	List<int> list;
+
+	ASSERT_NO_THROW(list.reset());
+	ASSERT_EQUALS(list.size(), 0);
+	setUp(list);
+	ASSERT_NO_THROW(list.reset());
+	ASSERT_EQUALS(list.size(), 0);
 
 	return true;
 }
 
 static bool testListIterator() {
-	// TODO: Add tests
+	List<int> list;
+
+	// Checking empty list
+	for (List<int>::Iterator it(list.begin()); it != list.end(); ++it)
+		;
+
+	// Checking the iterator's path
+	int array[] = {3, 3, 2, 3, 4 ,5};
+	setUp(list);
+	int i(0);
+	for (List<int>::Iterator it(list.begin()); it != list.end(); ++it, ++i) {
+		ASSERT_EQUALS(*it, array[i]);
+	}
+
+	// Checking operators
+	List<int>::Iterator it(list.begin());
+	ASSERT_EQUALS(*(++it), list[1]);
+	ASSERT_EQUALS(*(it++), list[1]);
+	ASSERT_FALSE(*it == *list.end());
+	it = list.begin();
+	ASSERT_FALSE(*it != *list.begin());
+
+	*it = 1;
+	ASSERT_EQUALS(list[0], 1);
 
 	return true;
 }
 
 int main() {
+	RUN_TEST(testListCopyConstructor);
 	RUN_TEST(testListPopBack);
 	RUN_TEST(testListPushBack);
 	RUN_TEST(testListPopFront);

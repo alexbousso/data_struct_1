@@ -10,6 +10,7 @@
 
 #include "exceptions.h"
 #include <cassert>		// For assert
+#include <iostream>
 
 template<typename T>
 class List {
@@ -24,6 +25,10 @@ class List {
 	void pushFirstNode(List<T>::Node*);
 
 public:
+	/**
+	 * WARNING: If a node is added or removed the iterator becomes invalid! For
+	 * every change in the list one must build a new iterator.
+	 */
 	class Iterator;
 
 	Iterator begin();
@@ -31,8 +36,7 @@ public:
 
 	List();
 	List(const List&);
-	// TODO
-//	List operator =(const List&);
+	List operator =(List&);
 	~List();
 
 	// Remove last element from list
@@ -70,11 +74,11 @@ class List<T>::Node {
 	friend class Iterator;
 
 	Node() :
-			data(), next(nullptr), previous(nullptr) {
+			data(), next(NULL), previous(NULL) {
 	}
 
 	Node(T data) :
-			data(data), next(nullptr), previous(nullptr) {
+			data(data), next(NULL), previous(NULL) {
 	}
 
 	//TODO
@@ -82,6 +86,10 @@ class List<T>::Node {
 //	Node operator =(const Node&);
 };
 
+/**
+ * WARNING: If a node is added or removed the iterator becomes invalid! For
+ * every change in the list one must build a new iterator.
+ */
 template<typename T>
 class List<T>::Iterator {
 	typename List<T>::Node *node;
@@ -92,40 +100,51 @@ public:
 	}
 	typename List<T>::Iterator& operator ++();
 	typename List<T>::Iterator operator ++(int);
-	typename List<T>::Node& operator *() const;
-	typename List<T>::Node* operator ->() const;
+	T& operator *() const;
+	// QUESTION: Do we need this?
+//	T* operator ->() const;
 	bool operator ==(const Iterator&) const;
 	bool operator !=(const Iterator&) const;
 };
 
-/*****************************
- * FUNCTIONS IMPLEMENTATIONS *
- *****************************/
+/*
+ *						*****************************
+ *						* FUNCTIONS IMPLEMENTATIONS *
+ *						*****************************
+ */
 
-/**
- * CLASS LIST
+/*
+ *								CLASS LIST
  */
 
 template<typename T>
 inline List<T>::List() :
 		first(new List<T>::Node), last(first), listSize(0) {
-	first->next = nullptr;
-	last->previous = nullptr;
+	first->next = NULL;
+	last->previous = NULL;
 }
 
 template<typename T>
 inline List<T>::List(const List& copy) :
-		List() {
-	for (auto it = begin(); it != end(); ++it) {
-		pushBack(it->node->data);
+		first(new List<T>::Node), last(first), listSize(0) {
+	for (List<T>::Iterator it = begin(); it != end(); ++it) {
+		pushBack(*it);
 	}
+}
+
+template<typename T>
+List<T> List<T>::operator =(List& copy) {
+	for (List<T>::Iterator it(copy.begin()); it != copy.end(); ++it) {
+		pushBack(*it);
+	}
+	return *this;
 }
 
 template<typename T>
 inline List<T>::~List() {
 	reset();
 	delete last;
-	last = first = nullptr;
+	last = first = NULL;
 }
 
 template<typename T>
@@ -164,7 +183,7 @@ void List<T>::popFront() {
 
 	List<T>::Node* toDelete(first);
 	first = first->next;
-	first->previous = nullptr;
+	first->previous = NULL;
 	delete toDelete;
 	listSize--;
 }
@@ -180,7 +199,7 @@ void List<T>::pushFront(const T& data) {
 
 	newNode->next = first;
 	first->next->previous = newNode;
-	newNode->previous = nullptr;
+	newNode->previous = NULL;
 	first = newNode;
 	listSize++;
 }
@@ -217,7 +236,7 @@ inline void List<T>::pushFirstNode(List<T>::Node* node) {
 	assert(first == last && listSize == 0);
 
 	first = node;
-	node->previous = nullptr;
+	node->previous = NULL;
 	node->next = last;
 	last->previous = node;
 	listSize++;
@@ -240,7 +259,7 @@ T& List<T>::operator [](const int index) const {
 		++it;
 	}
 
-	return it->data;
+	return *it;
 }
 
 template<typename T>
@@ -251,8 +270,8 @@ void List<T>::reset() {
 	assert(last == first);
 }
 
-/**
- * CLASS NODE
+/*
+ *								CLASS NODE
  */
 
 // QUESTION: Why do we need this?
@@ -261,8 +280,8 @@ void List<T>::reset() {
 //	data = other.data;
 //	return *this;
 //}
-/**
- * CLASS ITERATOR
+/*
+ *								CLASS ITERATOR
  */
 
 template<typename T>
@@ -282,18 +301,19 @@ inline typename List<T>::Iterator List<T>::Iterator::operator ++(int) {
 }
 
 template<typename T>
-inline typename List<T>::Node& List<T>::Iterator::operator *() const {
-	return *node;
+inline T& List<T>::Iterator::operator *() const {
+	return node->data;
 }
 
-template<typename T>
-inline typename List<T>::Node* List<T>::Iterator::operator ->() const {
-	return node;
-}
+// QUESTION: Do we need this?
+//template<typename T>
+//inline T* List<T>::Iterator::operator ->() const {
+//	return &(node->data);
+//}
 
 template<typename T>
 inline bool List<T>::Iterator::operator ==(const Iterator& it) const {
-	return List<T>::Node::node == &(*it);
+	return node == it.node;
 }
 
 template<typename T>
