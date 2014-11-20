@@ -55,7 +55,7 @@ public:
 	void insert(const T&);
 
 	//removing an object from the tree
-	void remove(T&);
+	void remove(const T&);
 
 	//finding a specific object in the tree
 	bool find(const T&) const;
@@ -289,7 +289,7 @@ void AVLTree<T, Compare>::remove(AVLTree<T, Compare>::AVLNode* currentRoot) {
 }
 
 template<typename T, class Compare>
-void AVLTree<T, Compare>::remove(T& element) {
+void AVLTree<T, Compare>::remove(const T& element) {
 	AVLNode* toRemove = find(root, element);
 	remove(toRemove);
 }

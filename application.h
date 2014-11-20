@@ -17,6 +17,8 @@ class Application {
 
 public:
 	Application(int appID, int versionCode, int downloadCount);
+	Application(const Application&);
+	Application operator =(Application&);
 
 	/**
 	 * Returns the application ID
@@ -47,18 +49,28 @@ public:
 	void upgradeApplication(const int newVersion);
 };
 
-/****************************
- * FUNCTION IMPLEMENTATIONS *
- ****************************
+/*						****************************
+ *						* FUNCTION IMPLEMENTATIONS *
+ *						****************************
  * All functions are implemented here because they are defined inline.
  */
 
-inline Application::Application(int appID, int versionCode,
-		int downloadCount) :
+inline Application::Application(int appID, int versionCode, int downloadCount) :
 		appID(appID), versionCode(versionCode), downloadCount(downloadCount) {
 	if (appID <= 0 || versionCode <= 0 || downloadCount < 0) {
 		throw(InvalidInput());
 	}
+}
+
+// TODO: Add tests
+inline Application::Application(const Application& copy) :
+		appID(copy.appID), versionCode(copy.versionCode), downloadCount(
+				copy.downloadCount) {
+}
+
+// TODO: Add tests
+inline Application Application::operator =(Application & copy) {
+	return Application(copy.appID, copy.downloadCount, copy.versionCode);
 }
 
 inline int Application::getAppID() const {

@@ -124,14 +124,16 @@ inline List<T>::List() :
 	last->previous = NULL;
 }
 
+// FIXME: Check if this is right
 template<typename T>
 inline List<T>::List(const List& copy) :
 		first(new List<T>::Node), last(first), listSize(0) {
 	for (List<T>::Iterator it = begin(); it != end(); ++it) {
-		pushBack(*it);
+		copy.pushBack(*it);
 	}
 }
 
+// FIXME: Check if this is right
 template<typename T>
 List<T> List<T>::operator =(List& copy) {
 	for (List<T>::Iterator it(copy.begin()); it != copy.end(); ++it) {
