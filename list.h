@@ -161,6 +161,10 @@ void List<T>::popBack() {
 
 template<typename T>
 void List<T>::pushBack(const T& data) {
+	if (!data) {
+		throw InvalidInput();
+	}
+
 	List<T>::Node* newNode(new List<T>::Node(data));
 
 	if (listSize == 0) {
@@ -190,6 +194,10 @@ void List<T>::popFront() {
 
 template<typename T>
 void List<T>::pushFront(const T& data) {
+	if (!data) {
+		throw InvalidInput();
+	}
+
 	List<T>::Node* newNode(new List<T>::Node(data));
 
 	if (listSize == 0) {

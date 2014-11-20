@@ -32,4 +32,10 @@
 #define ASSERT_INDEX_OUT_OF_BOUNDS(arg) \
 	ASSERT_THROWS(IndexOutOfBounds, arg)
 
+#define ASSERT_INPUT_ALREADY_EXISTS(arg) \
+	ASSERT_THROWS(InputAlreadyExists, arg)
+
+#define ASSERT_DATA_DOES_NOT_EXIST(arg) \
+	ASSERT_THROWS(DataDoesNotExist, arg)
+
 #endif /* ASSERT_H_ */
