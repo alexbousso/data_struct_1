@@ -24,7 +24,7 @@ static void setUp(AVLTree<int, CompareInt>& tree) {
 	tree.insert(2);
 	tree.insert(3);
 	tree.insert(1);
-	tree.insert(7);
+	tree.insert(6);
 }
 
 static bool testAVLTreeInsert() {
@@ -78,7 +78,25 @@ static bool testAVLTreeFind() {
 }
 
 static bool testAVLTreeSize() {
-	// TODO: Add tests
+	AVLTree<int, CompareInt> tree;
+
+	ASSERT_EQUALS(tree.size(), 0);
+	setUp(tree);
+
+	for (int i(NUMBER_OF_ELEMENTS); i > 2; --i) {
+		ASSERT_EQUALS(tree.size(), i);
+		ASSERT_NO_THROW(tree.remove(i));
+	}
+
+	ASSERT_NO_THROW(tree.insert(3));
+	ASSERT_EQUALS(tree.size(), 3);
+
+	for (int i(3); i > 0; --i) {
+		ASSERT_EQUALS(tree.size(), i);
+		ASSERT_NO_THROW(tree.remove(i));
+	}
+
+	ASSERT_EQUALS(tree.size(), 0);
 
 	return true;
 }
