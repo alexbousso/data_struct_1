@@ -129,7 +129,7 @@ template<typename T>
 inline List<T>::List(const List& copy) :
 		first(new List<T>::Node), last(first), listSize(0) {
 	for (List<T>::Iterator it = begin(); it != end(); ++it) {
-		copy.pushBack(*it);
+		pushBack(*it);
 	}
 }
 

@@ -49,7 +49,7 @@ public:
 	}
 	AVLTree(const AVLTree&);
 	AVLTree operator=(const AVLTree&);
-	~AVLTree();
+	~AVLTree(){}
 
 	//inserting a new object to the tree
 	void insert(const T&);
@@ -58,7 +58,7 @@ public:
 	void remove(const T&);
 
 	//finding a specific object in the tree
-	bool find(const T&) const;
+	T find(const T&) const;
 
 	//returning the current size of the tree
 	int size() const;
@@ -83,6 +83,12 @@ public:
 
 	//update balance factor of the first broken node from a specific start point
 	AVLNode* updateBF(AVLNode*);
+
+	//in-order walk
+	template <typename Function>
+	void inOrder(Function func);
+
+	//TODO make min and max funcs + tests
 };
 
 template<typename T, class Compare>
@@ -134,7 +140,7 @@ void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
 	 return;
 	 }*/
 
-	if (compare(element > currentRoot->data) > 0) {	//if the data is larger then the roots'
+	if (compare(element, currentRoot->data) > 0) {	//if the data is larger then the roots'
 		if (currentRoot->right == NULL) {		//check if the right son is free
 			currentRoot->right = new AVLNode(element); //if it is, then set the right son to be the new node
 			currentRoot->right->dad = currentRoot;
@@ -162,26 +168,27 @@ void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
 }
 
 template<typename T, class Compare>
-bool AVLTree<T, Compare>::find(const T& element) const {
+T AVLTree<T, Compare>::find(const T& element) const {
 	if (root == NULL) {
-		return false;
+		throw DataDoesNotExist();
 	}
-	return find(root, element) ? true : false;
+	return (find(root, element))->data;
 }
 
 template<typename T, class Compare>
 typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::find(
 		AVLTree<T, Compare>::AVLNode* currentRoot, const T& element) const {
 	if (currentRoot == NULL) {
-		return NULL;
+		throw DataDoesNotExist();
 	}
-	if (compare(currentRoot->data, element) == 0) { //if it's the same object
+	if (compare(element, currentRoot->data) == 0) { //if it's the same object
 		return currentRoot;
 	}
 	if (compare(currentRoot->data, element) < 0) { //if the current is smaller, go to the right subtree
-		find(currentRoot->right, element);
+		return find(currentRoot->right, element);
 	}
-	find(currentRoot->left, element); //else: the current is larger-search the left subtree
+	return find(currentRoot->left, element); //else: the current is larger-search the left subtree
+
 }
 
 template<typename T, class Compare>
@@ -309,7 +316,7 @@ void AVLTree<T, Compare>::updateHight(AVLTree<T, Compare>::AVLNode* start,
 }
 
 template<typename T, class Compare>
-AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, Compare>::AVLNode* start) {
+typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, Compare>::AVLNode* start) {
 
 	AVLNode* toFix = findBadBF(start);
 	if (toFix == NULL) {
@@ -342,7 +349,7 @@ AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, Compare>:
 }
 
 template<typename T, class Compare>
-AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::findBadBF(
+typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::findBadBF(
 		AVLTree<T, Compare>::AVLNode* currentRoot) {
 
 	int bf = calcBF(currentRoot);		//calc the BF
@@ -357,7 +364,7 @@ AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::findBadBF(
 		return currentRoot;
 	}
 	assert(bf >= -1 && bf <= 1);
-	findBadBF(currentRoot->dad);
+	return findBadBF(currentRoot->dad);
 
 }
 
@@ -367,7 +374,7 @@ int AVLTree<T, Compare>::calcBF(AVLTree<T, Compare>::AVLNode* node) {
 		throw InvalidInput();
 	}
 	int leftH = node->left == NULL ? -1 : node->left->hight, rightH =
-			node->right == NULL ? -1 : node->right->hignt;
+			node->right == NULL ? -1 : node->right->hight;
 	return leftH - rightH;
 }
 
