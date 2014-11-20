@@ -11,56 +11,54 @@
 #include <iostream>
 #include "exceptions.h"
 #include <cassert>
+/*
+ #define LARGER 1
+ #define SMALLER -1
+ #define EQUAL 0
+ */
 
-template<typename T>
+template<typename T, class Compare>
 class AVLTree {
 
 	class AVLNode;
 	AVLNode* root;
 	int treeSize;
+	Compare compare;
+
 	//inserting a new object to the tree under a specific root
-	void insert(AVLNode*, T&);
+	void insert(AVLNode*, const T&);
+
 	//searching for an object in a specific sub tree
-	AVLNode* find(AVLNode*, T) const;
+	AVLNode* find(AVLNode*, const T&) const;
+
 	//removing an object from a specific subtree
 	void remove(AVLNode*);
+
 	//in case of removing a node with a single child' use this function
 	void removeSingleChild(AVLNode*);
 
+	//calculates the bf of a single node
+	int calcBF(AVLNode*);
+
+	//updates the BF after removing an item from the tree
+	void updateBFAfterRemove(AVLNode*);
+
 public:
-	AVLTree() :
-			root(NULL), treeSize(0) {
+	AVLTree(Compare func) :
+			root(NULL), treeSize(0), compare(func) {
 	}
 	AVLTree(const AVLTree&);
 	AVLTree operator=(const AVLTree&);
 	~AVLTree();
 
-	/*class Iterator {
-	 AVLNode* node;
-
-	 public:
-	 Iterator(AVLNode<T>* node) :
-	 node(node) {
-	 }
-	 Iterator& operator ++();
-	 Iterator operator ++(int);
-	 AVLNode<T>& operator *() const;
-	 AVLNode<T>* operator ->() const;
-	 bool operator ==(const Iterator&) const;
-	 bool operator !=(const Iterator&) const;
-	 };
-
-	 Iterator begin();
-	 Iterator end();
-	 */
 	//inserting a new object to the tree
-	void insert(T&);
+	void insert(const T&);
 
 	//removing an object from the tree
 	void remove(T&);
 
 	//finding a specific object in the tree
-	bool find(T) const;
+	bool find(const T&) const;
 
 	//returning the current size of the tree
 	int size() const;
@@ -78,25 +76,27 @@ public:
 	void rotateLR(AVLNode*);
 
 	//updating all the heights in a subtree
-	void updateHight(AVLNode*, AVLNode*, int);
+	void updateHight(AVLNode*, AVLNode*);
 
-	//Recursively update balance factor from a specific start point
-	void updateBF(AVLNode*, AVLNode*);
+	//finding the next node with bad BF
+	AVLNode* findBadBF(AVLNode*);
+
+	//update balance factor of the first broken node from a specific start point
+	AVLNode* updateBF(AVLNode*);
 };
 
-template<typename T>
-class AVLTree<T>::AVLNode {
+template<typename T, class Compare>
+class AVLTree<T, Compare>::AVLNode {
 	T data;
 	AVLNode* left;
 	AVLNode* right;
 	AVLNode* dad;
 	int hight;
-	int bf;
 	friend class AVLTree;
 	friend class Iterator;
 
 	AVLNode(T data) :
-			data(data), left(NULL), right(NULL), dad(NULL), hight(0), bf(0) {
+			data(data), left(NULL), right(NULL), dad(NULL), hight(0) {
 	}
 	AVLNode(const AVLNode&);
 	AVLNode operator=(const AVLNode&);
@@ -106,8 +106,8 @@ class AVLTree<T>::AVLNode {
  * Functions and Classes Implementation
  ******************************/
 
-template<typename T>
-void AVLTree<T>::insert(T& element) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::insert(const T& element) {
 	if (!element) {
 		throw InvalidInput();
 	}
@@ -120,76 +120,78 @@ void AVLTree<T>::insert(T& element) {
 	}
 }
 
-template<typename T>
-void AVLTree<T>::insert(AVLTree<T>::AVLNode* currentRoot, T& element) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
+		const T& element) {
 	if (!element) {
 		throw InvalidInput();
 	}
+
 	//TODO is the next code block required?! been taken care of in the casic unsert func!
 	/*if (currentRoot == NULL) {
-		currentRoot = new AVLNode(element);
-		treeSize++;
-		return;
-	}*/
-	if (element > currentRoot->data) {		//if the data is larger then the roots'
-		if(currentRoot->right == NULL){		//check if the right son is free
-			currentRoot->right = new AVLNode(element); 		//if it is, then set the right son to be the new node
+	 currentRoot = new AVLNode(element);
+	 treeSize++;
+	 return;
+	 }*/
+
+	if (compare(element > currentRoot->data) > 0) {	//if the data is larger then the roots'
+		if (currentRoot->right == NULL) {		//check if the right son is free
+			currentRoot->right = new AVLNode(element); //if it is, then set the right son to be the new node
 			currentRoot->right->dad = currentRoot;
-			int hightDiff = currentRoot->hight >= 1 ? 0 : 1;
-			updateHight(currentRoot, root, hightDiff);
 			treeSize++;
+			updateHight(currentRoot, root);
+			updateBF(currentRoot);
+			updateHight(currentRoot, root);	//after the rolls, update heights again
 			return;
 		}
-		insert(currentRoot->right, element);	//if it isn't, look for a space in the right subtree
+		insert(currentRoot->right, element);//if it isn't, look for a space in the right subtree
 	}
-	if (element < currentRoot->data) {			//if the data is smaller then the roots'
-		if(currentRoot->left == NULL){		//check if the left son is free
-			currentRoot->left = new AVLNode(element); 		//if it is, then set the left son to be the new node
+	if (compare(element, currentRoot->data) < 0) {//if the data is smaller then the roots'
+		if (currentRoot->left == NULL) {		//check if the left son is free
+			currentRoot->left = new AVLNode(element); //if it is, then set the left son to be the new node
 			currentRoot->left->dad = currentRoot;
-			int hightDiff = currentRoot->hight >= 1 ? 0 : 1;
-			updateHight(currentRoot, root, hightDiff);
 			treeSize++;
+			updateHight(currentRoot, root);
+			updateBF(currentRoot);
+			updateHight(currentRoot, root);	//after the rolls, update heights again
 			return;
 		}
-		insert(currentRoot->left, element);		//if it isn't, look for a space in the left subtree
+		insert(currentRoot->left, element);	//if it isn't, look for a space in the left subtree
 	}
 	throw InputAlreadyExists();
 }
 
-//TODO complete this function!
-//template <typename T>
-//void AVLTree<T>::remove(T& element){
-
-template<typename T>
-bool AVLTree<T>::find(T element) const {
+template<typename T, class Compare>
+bool AVLTree<T, Compare>::find(const T& element) const {
 	if (root == NULL) {
 		return false;
 	}
 	return find(root, element) ? true : false;
 }
 
-template<typename T>
-typename AVLTree<T>::AVLNode* AVLTree<T>::find(AVLTree<T>::AVLNode* currentRoot,
-		T element) const {
+template<typename T, class Compare>
+typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::find(
+		AVLTree<T, Compare>::AVLNode* currentRoot, const T& element) const {
 	if (currentRoot == NULL) {
 		return NULL;
 	}
-	if (currentRoot->data == element) {
+	if (compare(currentRoot->data, element) == 0) { //if it's the same object
 		return currentRoot;
 	}
-	if (currentRoot->data < element) {
+	if (compare(currentRoot->data, element) < 0) { //if the current is smaller, go to the right subtree
 		find(currentRoot->right, element);
 	}
-	find(currentRoot->left, element);
+	find(currentRoot->left, element); //else: the current is larger-search the left subtree
 }
 
-template<typename T>
-inline int AVLTree<T>::size() const {
+template<typename T, class Compare>
+inline int AVLTree<T, Compare>::size() const {
 	return treeSize;
 }
 
-template<typename T>
-void AVLTree<T>::rotateRight(AVLTree<T>::AVLNode* currentRoot) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::rotateRight(
+		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
 		//TODO throw exception
 	}
@@ -199,8 +201,9 @@ void AVLTree<T>::rotateRight(AVLTree<T>::AVLNode* currentRoot) {
 	currentRoot->dad = NULL;
 }
 
-template<typename T>
-void AVLTree<T>::rotateLeft(AVLTree<T>::AVLNode* currentRoot) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::rotateLeft(
+		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
 		//TODO throw exception
 	}
@@ -210,50 +213,72 @@ void AVLTree<T>::rotateLeft(AVLTree<T>::AVLNode* currentRoot) {
 	currentRoot->dad = NULL;
 }
 
-template <typename T>
-void AVLTree<T>::rotateRL(AVLNode* currentRoot){
+template<typename T, class Compare>
+void AVLTree<T, Compare>::rotateRL(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	rotateRight(currentRoot->right);
 	rotateLeft(currentRoot);
 }
 
-template <typename T>
-void AVLTree<T>::rotateLR(AVLNode* currentRoot){
+template<typename T, class Compare>
+void AVLTree<T, Compare>::rotateLR(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	rotateRight(currentRoot->left);
 	rotateLeft(currentRoot);
 }
 
-
-template <typename T>
-void AVLTree<T>::removeSingleChild(AVLTree<T>::AVLNode* currentRoot) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::removeSingleChild(
+		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot->left != NULL && currentRoot->right == NULL) { //if current has only a left child
-		if (currentRoot->dad->left->data == currentRoot->data) { //if current is it's dads' left child
-			currentRoot->dad->left = currentRoot->left;
+		if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) { //if current is it's dads' left child
+			currentRoot->dad->left = currentRoot->left;		//
+			currentRoot->left->dad = currentRoot->dad;
 		} else {					//else-current is it's dads right child
 			currentRoot->dad->right = currentRoot->left;
+			currentRoot->right->dad = currentRoot->dad;
 		}
-	} else {					//else-current has only a right child (or no children at all)
-		if (currentRoot->dad->left->data == currentRoot->data) {//if current is it's dads' left child
+	} else {	//else-current has only a right child (or no children at all)
+		if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) {//if current is it's dads' left child
 			currentRoot->dad->left = currentRoot->right;
+			currentRoot->right->dad = currentRoot->dad;
 		} else {					//else-current is it's dads right child
 			currentRoot->dad->right = currentRoot->right;
+			currentRoot->right->dad = currentRoot->dad;
 		}
 	}
+	updateBFAfterRemove(currentRoot->dad);
+	delete(currentRoot);
 }
 
-template<typename T>
-void AVLTree<T>::remove(AVLTree<T>::AVLNode* currentRoot) {
+template<typename T, class Compare>
+void AVLTree<T, Compare>::remove(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
-		//throw DataDoesNotExist();
-		//TODO check if should throw or return without doing anything!
-		return;
+		throw DataDoesNotExist();
 	}
+
 	if (currentRoot->left == NULL && currentRoot->right == NULL) {//if current has no offsprings
+		AVLNode* tempDad = currentRoot->dad;
+		if (tempDad->right == currentRoot){		//if current is it's dads right son.
+			tempDad->right = NULL;
+		}
+		else{		//current is it's dads left son
+			assert(tempDad->left == currentRoot);
+
+			tempDad->left = NULL;
+		}
 		delete (currentRoot);
+		updateHight(tempDad, root);
+		updateBFAfterRemove(tempDad);
+		return;
 	}
 	if ((currentRoot->left != NULL && currentRoot->right == NULL)
 			|| (currentRoot->right != NULL && currentRoot->left == NULL)) {	//if current has only one child
+
 		removeSingleChild(currentRoot);
+
 	} else {								//current has both children
+
+		assert(currentRoot->left != NULL && currentRoot->right != NULL);
+
 		AVLNode* successor = currentRoot->right;
 		while (successor->left != NULL) {		//find the successor
 			successor = successor->left;
@@ -263,41 +288,97 @@ void AVLTree<T>::remove(AVLTree<T>::AVLNode* currentRoot) {
 	}
 }
 
-template<typename T>
-void AVLTree<T>::remove(T& element){
+template<typename T, class Compare>
+void AVLTree<T, Compare>::remove(T& element) {
 	AVLNode* toRemove = find(root, element);
 	remove(toRemove);
 }
 
-template<typename T>
-void AVLTree<T>::updateHight(AVLTree<T>::AVLNode* start, AVLTree<T>::AVLNode* end, int diff){
-	if(start == end){
-		end->hight += diff;
+template<typename T, class Compare>
+void AVLTree<T, Compare>::updateHight(AVLTree<T, Compare>::AVLNode* start,
+		AVLTree<T, Compare>::AVLNode* end) {
+	int lH = start->left == NULL ? -1 : start->left->hight, rH =//calc the subtrees heights
+			start->right == NULL ? -1 : start->left->hight;
+
+	if (start == end) {						//if we are at the root/stop point
+		end->hight = 1 + (lH > rH ? lH : rH);
 		return;
 	}
-	start->hight += diff;
-	start = start->dad;
+	start->hight = 1 + (lH > rH ? lH : rH);	//take the max between both subs and add 1
+	updateHight(start = start->dad, end);		//update the rest of the tree
 }
 
-template<typename T>
-void AVLTree<T>::updateBF(AVLTree<T>::AVLNode* start, AVLTree<T>::AVLNode* end){
+template<typename T, class Compare>
+AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, Compare>::AVLNode* start) {
 
-	//TODO stop condition!!!!!!!
+	AVLNode* toFix = findBadBF(start);
+	if (toFix == NULL) {
+		return NULL;
+	}
 
-	int hL = -1, hR = -1;
-	if(start->left != NULL){
-		hL = start->left->hight;
+	int bf = calcBF(toFix);				//calc the BF
+	if (bf > 1) {					//if the left side is heavier
+		if (calcBF(toFix->left) > 0) {//if in the left subtree-the left side is heavier
+			assert(bf >= 2);
+			rotateLeft(toFix);
+		}
+		if (calcBF(toFix->left) < 0) {//if in the left subtree-the right side is heavier
+			assert(bf >= 2);
+			rotateLR(toFix);
+		}
 	}
-	if(start->right != NULL){
-		hL = start->right->hight;
+	if (bf < -1) {						//if the right subtree is heavier
+		if (calcBF(toFix->right) < 0) {	//if in the right subtree- the right side  is heavier
+			assert(bf <= -2);
+			rotateRight(toFix);
+		}
+		if (calcBF(toFix->right) > 0) {	//if in the right subtree- the left side  is heavier
+			assert(bf <= -2);
+			rotateRL(toFix);
+		}
 	}
-	int bf = hL - hR;
-	if (bf >= -1 && bf <= 1){		//if the balance
-		updateBF(start->dad, end);
+	updateHight(toFix, root);			//fix the heights after the rolls
+	return toFix;
+}
+
+template<typename T, class Compare>
+AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::findBadBF(
+		AVLTree<T, Compare>::AVLNode* currentRoot) {
+
+	int bf = calcBF(currentRoot);		//calc the BF
+
+	if (compare(currentRoot->data, root->data) == 0) { //if you are the root
+		if (bf < -1 || bf > 1) {			//check if the roots BF is broken
+			return currentRoot;		//if it is, send the root as the node to fix
+		}
+		return NULL;		//else-there are no more nodes to fix-return null.
 	}
-	if(bf < -1){
-		//
+	if (bf < -1 || bf > 1) {
+		return currentRoot;
+	}
+	assert(bf >= -1 && bf <= 1);
+	findBadBF(currentRoot->dad);
+
+}
+
+template<typename T, class Compare>
+int AVLTree<T, Compare>::calcBF(AVLTree<T, Compare>::AVLNode* node) {
+	if (node == NULL) {
+		throw InvalidInput();
+	}
+	int leftH = node->left == NULL ? -1 : node->left->hight, rightH =
+			node->right == NULL ? -1 : node->right->hignt;
+	return leftH - rightH;
+}
+
+
+template<typename T, class Compare>
+void AVLTree<T, Compare>::updateBFAfterRemove(AVLTree<T, Compare>::AVLNode* currentRoot){
+	while (currentRoot != NULL){
+		currentRoot = updateBF(currentRoot); //the new root will be the node that was recently fixed
 	}
 }
+
+
 
 #endif /* AVL_TREE_H_ */
