@@ -10,7 +10,7 @@ public:
 		return a - b;
 	}
 };
-/*
+
 static const int NUMBER_OF_ELEMENTS(6);
 
 static void setUp(AVLTree<int, CompareInt>& tree) {
@@ -21,7 +21,7 @@ static void setUp(AVLTree<int, CompareInt>& tree) {
 	tree.insert(1);
 	tree.insert(6);
 }
-*/
+
 static bool testAVLTreeInsert() {
 
 	CompareInt func;
@@ -29,7 +29,7 @@ static bool testAVLTreeInsert() {
 
 	ASSERT_NO_THROW(tree.insert(4));
 	ASSERT_NO_THROW(tree.insert(5));
-/*	ASSERT_NO_THROW(tree.insert(2));
+	ASSERT_NO_THROW(tree.insert(2));
 	ASSERT_NO_THROW(tree.insert(3));
 
 	ASSERT_INPUT_ALREADY_EXISTS(tree.insert(2));
@@ -39,10 +39,10 @@ static bool testAVLTreeInsert() {
 	ASSERT_NO_THROW(tree.insert(5));
 	ASSERT_INPUT_ALREADY_EXISTS(tree.insert(3));
 	ASSERT_EQUALS(tree.size(), 4);
-*/
+
 	return true;
 }
-/*
+
 static bool testAVLTreeRemove() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -60,6 +60,44 @@ static bool testAVLTreeRemove() {
 	return true;
 }
 
+static bool testAVLTreeMin() {
+	CompareInt func;
+	AVLTree<int, CompareInt> tree(func);
+	//FIXME what wrong with the line above
+
+	setUp(tree);
+
+	ASSERT_EQUALS(1, tree.getMin());
+	ASSERT_NO_THROW(tree.remove(1));
+	ASSERT_NO_THROW(tree.remove(2));
+	ASSERT_EQUALS(3, tree.getMin());
+
+	ASSERT_NO_THROW(tree.insert(2));
+	ASSERT_EQUALS(2, tree.getMin());
+
+	return true;
+}
+
+static bool testAVLTreeMax() {
+	CompareInt func;
+	AVLTree<int, CompareInt> tree(func);
+	//FIXME what wrong with the line above
+
+	setUp(tree);
+	//tree.printTree();
+
+	ASSERT_EQUALS(6, tree.getMax());
+	ASSERT_NO_THROW(tree.remove(6));
+	ASSERT_EQUALS(5, tree.getMax());
+
+	ASSERT_NO_THROW(tree.insert(7));
+	ASSERT_EQUALS(7, tree.getMax());
+	//tree.printTree();
+	ASSERT_NO_THROW(tree.checkTree());
+	return true;
+}
+
+/*
 static bool testAVLTreeFind() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -104,7 +142,9 @@ static bool testAVLTreeSize() {
 */
 int main() {
 	RUN_TEST(testAVLTreeInsert);
-	//RUN_TEST(testAVLTreeRemove);
+	RUN_TEST(testAVLTreeRemove);
+	RUN_TEST(testAVLTreeMin);
+	RUN_TEST(testAVLTreeMax);
 	//RUN_TEST(testAVLTreeFind);
 	//RUN_TEST(testAVLTreeSize);
 

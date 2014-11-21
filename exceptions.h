@@ -24,6 +24,13 @@ class InputAlreadyExists: public std::exception {
 class DataDoesNotExist: public std::exception {
 };
 
+template <typename T>
+class BadTreeElement: public std::exception {
+public:
+	T badElement;
+	BadTreeElement(T element): badElement(element){}
+};
+
 class AppIDExists: public std::exception {
 };
 
