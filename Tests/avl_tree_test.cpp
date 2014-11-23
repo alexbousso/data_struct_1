@@ -114,7 +114,7 @@ static bool testAVLTreeFind() {
 
 	return true;
 }
-
+*/
 static bool testAVLTreeSize() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -123,12 +123,14 @@ static bool testAVLTreeSize() {
 	setUp(tree);
 
 	for (int i(NUMBER_OF_ELEMENTS); i > 2; --i) {
+		//tree.printTree();
 		ASSERT_EQUALS(tree.size(), i);
 		ASSERT_NO_THROW(tree.remove(i));
 	}
 
 	ASSERT_NO_THROW(tree.insert(3));
 	ASSERT_EQUALS(tree.size(), 3);
+	tree.printTree();
 
 	for (int i(3); i > 0; --i) {
 		ASSERT_EQUALS(tree.size(), i);
@@ -139,14 +141,14 @@ static bool testAVLTreeSize() {
 
 	return true;
 }
-*/
+
 int main() {
 	RUN_TEST(testAVLTreeInsert);
 	RUN_TEST(testAVLTreeRemove);
 	RUN_TEST(testAVLTreeMin);
 	RUN_TEST(testAVLTreeMax);
 	//RUN_TEST(testAVLTreeFind);
-	//RUN_TEST(testAVLTreeSize);
+	RUN_TEST(testAVLTreeSize);
 
 	return 0;
 }

@@ -30,6 +30,7 @@ class AVLTree {
 
 	class CheckRoot;
 	class PrintSubTree;
+	class CopyTree;
 
 	//inserting a new object to the tree under a specific root
 	void insert(AVLNode*, const T&);
@@ -150,6 +151,26 @@ class AVLTree<T, Compare>::AVLNode {
  * Functions and Classes Implementation
  ******************************/
 
+template<typename T, class Compare>
+class AVLTree<T, Compare>::CopyTree{
+	AVLTree<T, Compare> copy;
+public:
+	CopyTree(AVLTree<T, Compare> tree):copy(tree){}
+	void operator()(AVLNode* newNode){
+		copy.insert(newNode->data);
+	}
+};
+
+/*
+template<typename T, class Compare>
+AVLTree<T, Compare>::AVLTree(const AVLTree& src){
+	AVLTree<T, Compare> newTree(src.compare);
+	CopyTree copier(newTree);
+
+	preOrder(newTree->root, copier);
+	return newTree;
+}
+*/
 template<typename T, class Compare>
 void AVLTree<T, Compare>::insert(const T& element) {
 	/*if (!element) {
@@ -304,7 +325,7 @@ void AVLTree<T, Compare>::rotateRL(AVLTree<T, Compare>::AVLNode* currentRoot) {
 template<typename T, class Compare>
 void AVLTree<T, Compare>::rotateLR(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	rotateLeft(currentRoot->left);
-	updateHight(currentRoot->left->left, currentRoot->left);
+	updateHight(currentRoot->left->left, currentRoot);
 	rotateRight(currentRoot);
 	if(currentRoot == root){
 		root = currentRoot->dad;
@@ -315,11 +336,17 @@ void AVLTree<T, Compare>::rotateLR(AVLTree<T, Compare>::AVLNode* currentRoot) {
 template <typename T, class Compare>
 void AVLTree<T, Compare>::rotateLL(AVLTree<T, Compare>::AVLNode* currentRoot){
 	rotateRight(currentRoot);
+	if(currentRoot == root){
+		root = currentRoot->dad;
+	}
 }
 
 template <typename T, class Compare>
 void AVLTree<T, Compare>::rotateRR(AVLTree<T, Compare>::AVLNode* currentRoot){
 	rotateLeft(currentRoot);
+	if(currentRoot == root){
+		root = currentRoot->dad;
+	}
 }
 
 
@@ -327,22 +354,37 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::removeSingleChild(
 		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot->left != NULL && currentRoot->right == NULL) { //if current has only a left child
-		if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) { //if current is it's dads' left child
-			currentRoot->dad->left = currentRoot->left;		//
-			currentRoot->left->dad = currentRoot->dad;
-		} else {					//else-current is it's dads right child
-			currentRoot->dad->right = currentRoot->left;
-			currentRoot->right->dad = currentRoot->dad;
+		if(currentRoot == root){//if current is the rot of the tree then switch parts
+			root = currentRoot->left;
+			root->dad = NULL;
+			currentRoot->dad = root;
+		}
+		else{	//if it isn't the root:
+			if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) { //if current is it's dads' left child
+				currentRoot->dad->left = currentRoot->left;		//
+				currentRoot->left->dad = currentRoot->dad;
+			} else {					//else-current is it's dads right child
+				currentRoot->dad->right = currentRoot->left;
+				currentRoot->right->dad = currentRoot->dad;
+			}
 		}
 	} else {	//else-current has only a right child (or no children at all)
-		if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) {//if current is it's dads' left child
-			currentRoot->dad->left = currentRoot->right;
-			currentRoot->right->dad = currentRoot->dad;
-		} else {					//else-current is it's dads right child
-			currentRoot->dad->right = currentRoot->right;
-			currentRoot->right->dad = currentRoot->dad;
+		if(currentRoot == root){//if current is the rot of the tree
+					root = currentRoot->right;
+					root->dad = NULL;
+					currentRoot->dad = root;
+		}
+		else{	//if it isn't the root
+			if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) {//if current is it's dads' left child
+				currentRoot->dad->left = currentRoot->right;
+				currentRoot->right->dad = currentRoot->dad;
+			} else {					//else-current is it's dads right child
+				currentRoot->dad->right = currentRoot->right;
+				currentRoot->right->dad = currentRoot->dad;
+			}
 		}
 	}
+	updateHight(currentRoot->dad, currentRoot->dad);
 	updateBFAfterRemove(currentRoot->dad);
 	delete(currentRoot);
 }
@@ -355,6 +397,10 @@ void AVLTree<T, Compare>::remove(AVLTree<T, Compare>::AVLNode* currentRoot) {
 
 	if (currentRoot->left == NULL && currentRoot->right == NULL) {//if current has no offsprings
 		AVLNode* tempDad = currentRoot->dad;
+		if(tempDad == NULL){//if wer'e at the root:
+			delete (currentRoot);
+			return;
+		}
 		if (tempDad->right == currentRoot){		//if current is it's dads right son.
 			tempDad->right = NULL;
 		}
