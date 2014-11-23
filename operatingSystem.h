@@ -15,12 +15,20 @@
 #include "library1.h"
 
 
+class AppSorter{
+public:
+	int operator()(const Application& app1, const Application& app2) const{
+		return app1.getAppID()-app2.getAppID();
+	}
+};
+
+
 class OS{
 	List<Version> versions;
-	class MainSorter;
-	AVLTree <Application, MainSorter> applications;
+
+	AVLTree<Application, AppSorter> applications;
 public:
-	OS(): versions(), applications(MainSorter()){}
+	OS(): versions(), applications(AppSorter()){}
 	~OS();
 
 	//adds a new version
@@ -31,20 +39,27 @@ public:
 
 	StatusType removeApplication(int);
 
-	//increses the download count on a specific app in the specified version
-	void increseDownloads(int, int);
+	//increases the download count on a specific app in the specified version
+	StatusType increseDownloads(int, int);
 
 	//upgrades an application to a newer version
-	void upgradeApplication(int);
+	StatusType upgradeApplication(int);
 
 	//returns all the apps in a specified version by their downloads
 	//TODO any other input needed here?
-	void getAllAppsByDownloads(int);
+	StatusType getAllAppsByDownloads(int);
 
 	//updates the downloads of a certain group of apps
-	void updateDownloads(int, int);
+	StatusType updateDownloads(int, int);
+
+	//returns true if a version with the given code is found in the list and false otherwise
+	bool findVersion(int);
+
+	//if a version with the given code is found-return a reference to it
+	Version& getVersion(int);
 
 };
+
 
 
 

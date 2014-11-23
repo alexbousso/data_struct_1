@@ -17,7 +17,7 @@ class Application {
 
 public:
 	Application();
-	Application(int appID, int versionCode = 0, int downloadCount = 0);
+	Application(int appID, int versionCode, int downloadCount);
 	Application(const Application&);
 	Application operator =(Application&);
 

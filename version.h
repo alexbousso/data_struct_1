@@ -20,6 +20,7 @@ public:
 	enum TypeOfComparison {
 		FIRST_BY_ID, FIRST_BY_DOWNLOAD_COUNT
 	};
+	Compare(): type(FIRST_BY_ID){}
 	Compare(TypeOfComparison type) :
 			type(type) {
 	}
@@ -31,6 +32,7 @@ private:
 
 class Version {
 public:
+	Version(): versionCode(-1){}
 	Version(int versionCode) :
 			versionCode(versionCode), apps(Compare(Compare::FIRST_BY_ID)), downloads(
 					Compare(Compare::FIRST_BY_DOWNLOAD_COUNT)) {

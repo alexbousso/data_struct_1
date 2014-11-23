@@ -64,6 +64,10 @@ class AVLTree {
 	template <typename Function>
 	void inOrder(AVLNode*, Function);
 
+	//in-order walk operating on the node
+	template <typename Function>
+	void postOrderNode(AVLNode*, Function);
+
 	//rotating right
 	void rotateRight(AVLNode*);
 
@@ -91,13 +95,23 @@ class AVLTree {
 	//update balance factor of the first broken node from a specific start point
 	AVLNode* updateBF(AVLNode*);
 
+	class DeleteNode{
+	public:
+		void operator()(AVLNode* node){
+			delete(node);
+		}
+	};
+
 public:
+	AVLTree(): root(NULL), treeSize(0){}
 	AVLTree(Compare func) :
 			root(NULL), treeSize(0), compare(func) {
 	}
-	AVLTree(const AVLTree&);
+	//AVLTree(const AVLTree&);
+	//TODO is the coptC'tor needed?!?!
+
 	AVLTree operator=(const AVLTree&);
-	~AVLTree(){}
+	~AVLTree();
 
 	//inserting a new object to the tree
 	void insert(const T&);
@@ -107,6 +121,12 @@ public:
 
 	//finding a specific object in the tree
 	T find(const T&) const;
+
+	//returns a reference to a specific object in the tree
+	T getData(const T& element) const{
+		//T toReturn = find(element);
+		return find(element);
+	}
 
 	//returning the current size of the tree
 	int size() const;
@@ -164,6 +184,13 @@ public:
 		copy.insert(newNode->data);
 	}
 };
+
+template<typename T, class Compare>
+AVLTree<T, Compare>::~AVLTree(){
+	DeleteNode deleter;
+	postOrderNode(root, deleter);
+}
+
 
 /*
 template<typename T, class Compare>
@@ -641,6 +668,19 @@ void AVLTree<T, Compare>::inOrder(AVLNode* currentRoot, Function func){
 	func(currentRoot->data);			//do something on the roots' data
 	inOrder(currentRoot->right, func);	//take care of the right subtree
 }
+
+
+template <typename T, class Compare>
+template <typename Function>
+void AVLTree<T, Compare>::postOrderNode(AVLNode* currentRoot, Function func){
+	if (currentRoot == NULL){
+		return;
+	}
+	postOrderNode(currentRoot->left, func);	//take care of left subtree
+	postOrderNode(currentRoot->right, func);	//take care of the right subtree
+	func(currentRoot);			//do something on the root
+}
+
 
 
 template <typename T, class Compare>

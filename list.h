@@ -42,7 +42,7 @@ public:
 	 * returns true if found and feels the ptr with the object
 	 *  and false if not-then the ptrs' value isn't relevant
 	 */
-	bool find(T&, T*);
+	bool find(const T&);
 
 
 
@@ -339,6 +339,15 @@ template<typename T>
 inline bool List<T>::Iterator::operator !=(const Iterator& it) const {
 	return !(*this == it);
 }
+
+template<typename T>
+bool List<T>::find(const T& element){
+	for(Iterator it = begin(); it != end(); ++it){
+
+	}
+	return true;
+}
+
 
 #endif /* LIST_H_ */
 
