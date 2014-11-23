@@ -53,7 +53,8 @@ public:
 
 	/**
 	 * Finds the right app in the tree and increases the download count in both
-	 * trees.
+	 * trees. If the application ID does not exist, then the exception
+	 * DataDoesNotExist() is thrown.
 	 */
 	void increaseDownloads(int appID, int downloadIncrease);
 
