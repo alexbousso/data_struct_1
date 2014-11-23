@@ -56,16 +56,13 @@ class AVLTree {
 	//returns the min from a tree with a specific root
 	T getMin(AVLNode*);
 
-
-
-
 	//pre-order walk
 	template <typename Function>
 	void preOrder(AVLNode*, Function);
 
 	//in-order walk
 	template <typename Function>
-	void inOrder(Function);
+	void inOrder(AVLNode*, Function);
 
 	//rotating right
 	void rotateRight(AVLNode*);
@@ -126,6 +123,10 @@ public:
 
 	//returns the min element in the tree
 	T getMin();
+
+	//in-order walk
+	template <typename Function>
+	void inOrder(Function);
 };
 
 
@@ -622,6 +623,22 @@ void AVLTree<T, Compare>::printTree(){
 	preOrder(root, printer);
 }
 
+template <typename T, class Compare>
+template <typename Function>
+void AVLTree<T, Compare>::inOrder(AVLNode* currentRoot, Function func){
+	if (currentRoot == NULL){
+		return;
+	}
+	inOrder(currentRoot->left, func);	//take care of left subtree
+	func(currentRoot->data);			//do something on the roots' data
+	inOrder(currentRoot->right, func);	//take care of the right subtree
+}
 
+
+template <typename T, class Compare>
+template <typename Function>
+void AVLTree<T, Compare>::inOrder(Function func){
+	inOrder(root, func);
+}
 
 #endif /* AVL_TREE_H_ */
