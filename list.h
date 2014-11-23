@@ -9,8 +9,7 @@
 #define LIST_H_
 
 #include "exceptions.h"
-#include <cassert>		// For assert
-#include <iostream>
+#include <cassert>		// For assert#include <iostream>
 
 template<typename T>
 class List {
@@ -38,6 +37,14 @@ public:
 	List(const List&);
 	List operator =(List&);
 	~List();
+
+	/*searching for a specific data in the list
+	 * returns true if found and feels the ptr with the object
+	 *  and false if not-then the ptrs' value isn't relevant
+	 */
+	bool find(T&, T*);
+
+
 
 	// Remove last element from list
 	void popBack();

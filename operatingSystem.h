@@ -12,22 +12,24 @@
 #include "avl_tree.h"
 #include "version.h"
 #include "application.h"
+#include "library1.h"
 
 
 class OS{
 	List<Version> versions;
+	class MainSorter;
+	AVLTree <Application, MainSorter> applications;
 public:
-	OS(): versions(){}
+	OS(): versions(), applications(MainSorter()){}
 	~OS();
 
 	//adds a new version
-	void addVersion(int);
+	StatusType addVersion(int);
 
 	//adds a new app to a specific version
-	void addApplication(int, int, int);
+	StatusType addApplication(int, int, int);
 
-	//removes an app from a specified version
-	void removeApplication(int);
+	StatusType removeApplication(int);
 
 	//increses the download count on a specific app in the specified version
 	void increseDownloads(int, int);

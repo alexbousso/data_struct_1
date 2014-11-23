@@ -127,6 +127,9 @@ public:
 	//in-order walk
 	template <typename Function>
 	void inOrder(Function);
+
+	//returnd bool if an element is in the tree or not
+	bool find(T&);
 };
 
 
@@ -174,10 +177,7 @@ AVLTree<T, Compare>::AVLTree(const AVLTree& src){
 */
 template<typename T, class Compare>
 void AVLTree<T, Compare>::insert(const T& element) {
-	/*if (!element) {
-		throw InvalidInput();
-	}*/
-	//TODO check if the input check is needed
+
 	if (root == NULL) {
 		root = new AVLNode(element);
 		treeSize++;
@@ -191,10 +191,6 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
 		const T& element) {
 
-	//TODO check if the input check is needed
-	/*if (!element) {
-		throw InvalidInput();
-	}*/
 
 	//TODO is the next code block required?! been taken care of in the casic unsert func!
 	/*if (currentRoot == NULL) {
@@ -233,7 +229,7 @@ void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
 template<typename T, class Compare>
 T AVLTree<T, Compare>::find(const T& element) const {
 	if (root == NULL) {
-		throw DataDoesNotExist();
+		throw DataDoesNotExist("tree");
 	}
 	return (find(root, element))->data;
 }
@@ -242,7 +238,7 @@ template<typename T, class Compare>
 typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::find(
 		AVLTree<T, Compare>::AVLNode* currentRoot, const T& element) const {
 	if (currentRoot == NULL) {
-		throw DataDoesNotExist();
+		throw DataDoesNotExist("tree");
 	}
 	if (compare(element, currentRoot->data) == 0) { //if it's the same object
 		return currentRoot;
@@ -391,9 +387,21 @@ void AVLTree<T, Compare>::removeSingleChild(
 }
 
 template<typename T, class Compare>
+bool AVLTree<T, Compare>::find(T& element){
+	try{
+		find(element);
+	}
+	catch (DataDoesNotExist& noData) {
+		return false;
+	}
+	return true;
+}
+
+
+template<typename T, class Compare>
 void AVLTree<T, Compare>::remove(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
-		throw DataDoesNotExist();
+		throw DataDoesNotExist("tree");
 	}
 
 	if (currentRoot->left == NULL && currentRoot->right == NULL) {//if current has no offsprings
@@ -533,7 +541,7 @@ T AVLTree<T, Compare>::getMax(){
 template<typename T, class Compare>
 T AVLTree<T, Compare>::getMax(AVLTree<T, Compare>::AVLNode* currentRoot){
 	if (currentRoot == NULL){
-		throw DataDoesNotExist();
+		throw DataDoesNotExist("tree");
 	}
 	if (currentRoot->right == NULL){
 		return currentRoot->data;
@@ -549,7 +557,7 @@ T AVLTree<T, Compare>::getMin(){
 template<typename T, class Compare>
 T AVLTree<T, Compare>::getMin(AVLTree<T, Compare>::AVLNode* currentRoot){
 	if (currentRoot == NULL){
-		throw DataDoesNotExist();
+		throw DataDoesNotExist("tree");
 	}
 	if (currentRoot->left == NULL){
 		return currentRoot->data;

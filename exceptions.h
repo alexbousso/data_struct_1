@@ -22,6 +22,9 @@ class InputAlreadyExists: public std::exception {
 };
 
 class DataDoesNotExist: public std::exception {
+public:
+	const char* origin;
+	DataDoesNotExist(const char* str): origin(str){}
 };
 
 template <typename T>
