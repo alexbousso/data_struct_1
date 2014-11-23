@@ -14,7 +14,7 @@
 
 using std::cout;
 using std::endl;
-/*
+/* TODO: Delete
  #define LARGER 1
  #define SMALLER -1
  #define EQUAL 0

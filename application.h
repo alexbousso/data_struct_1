@@ -62,6 +62,7 @@ inline Application::Application() :
 
 inline Application::Application(int appID, int versionCode, int downloadCount) :
 		appID(appID), versionCode(versionCode), downloadCount(downloadCount) {
+	// TODO: Add tests for this function
 	if (appID <= 0 || versionCode <= 0 || downloadCount < 0) {
 		throw InvalidInput();
 	}

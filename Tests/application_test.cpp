@@ -1,4 +1,3 @@
-
 #include "../application.h"
 #include "assert.h"
 #include <string>
