@@ -499,7 +499,7 @@ typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, 
 
 	int bf = calcBF(toFix);				//calc the BF
 	if (bf > 1) {					//if the left side is heavier
-		if (calcBF(toFix->left) > 0) {//if in the left subtree-the left side is heavier
+		if (calcBF(toFix->left) >= 0) {//if in the left subtree-the left side is heavier
 			assert(bf >= 2);
 			rotateLL(toFix);
 		}
@@ -509,9 +509,9 @@ typename AVLTree<T, Compare>::AVLNode* AVLTree<T, Compare>::updateBF(AVLTree<T, 
 		}
 	}
 	if (bf < -1) {						//if the right subtree is heavier
-		if (calcBF(toFix->right) < 0) {	//if in the right subtree- the right side  is heavier
+		if (calcBF(toFix->right) <= 0) {	//if in the right subtree- the right side  is heavier
 			assert(bf <= -2);
-			rotateRight(toFix);
+			rotateRR(toFix);
 		}
 		else{	//if in the right subtree- the left side  is heavier
 			assert(bf <= -2);
@@ -633,8 +633,15 @@ public:
 
 template <typename T, class Compare>
 void AVLTree<T, Compare>::checkTree(){
-	CheckRoot checker;
-	preOrder(root, checker);
+
+	try{
+		CheckRoot checker;
+		preOrder(root, checker);
+	}catch (BadTreeElement& e) {
+		return false;
+	}
+	return true;
+
 }
 
 template <typename T, class Compare>

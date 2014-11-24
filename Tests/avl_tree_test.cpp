@@ -10,7 +10,7 @@ public:
 		return a - b;
 	}
 };
-
+/*
 static const int NUMBER_OF_ELEMENTS(6);
 
 static void setUp(AVLTree<int, CompareInt>& tree) {
@@ -21,7 +21,7 @@ static void setUp(AVLTree<int, CompareInt>& tree) {
 	tree.insert(1);
 	tree.insert(6);
 }
-
+*/
 static bool testAVLTreeInsert() {
 
 	CompareInt func;
@@ -38,11 +38,18 @@ static bool testAVLTreeInsert() {
 	ASSERT_NO_THROW(tree.remove(5));
 	ASSERT_NO_THROW(tree.insert(5));
 	ASSERT_INPUT_ALREADY_EXISTS(tree.insert(3));
+	//tree.printTree();
 	ASSERT_EQUALS(tree.size(), 4);
 
+	ASSERT_NO_THROW(tree.insert(10));
+	ASSERT_EQUALS(10, tree.getMax());
+
+	ASSERT_NO_THROW(tree.remove(2));
+	ASSERT_EQUALS(3, tree.getMin());
+	tree.printTree();
 	return true;
 }
-
+/*
 static bool testAVLTreeRemove() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -96,7 +103,7 @@ static bool testAVLTreeMax() {
 	ASSERT_NO_THROW(tree.checkTree());
 	return true;
 }
-
+*/
 /*
 static bool testAVLTreeFind() {
 	CompareInt func;
@@ -114,7 +121,7 @@ static bool testAVLTreeFind() {
 
 	return true;
 }
-*/
+*//*
 static bool testAVLTreeSize() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -140,15 +147,15 @@ static bool testAVLTreeSize() {
 	ASSERT_EQUALS(tree.size(), 0);
 
 	return true;
-}
+}*/
 
 int main() {
 	RUN_TEST(testAVLTreeInsert);
-	RUN_TEST(testAVLTreeRemove);
+	/*RUN_TEST(testAVLTreeRemove);
 	RUN_TEST(testAVLTreeMin);
-	RUN_TEST(testAVLTreeMax);
+	RUN_TEST(testAVLTreeMax);*/
 	//RUN_TEST(testAVLTreeFind);
-	RUN_TEST(testAVLTreeSize);
+	//RUN_TEST(testAVLTreeSize);
 
 	return 0;
 }
