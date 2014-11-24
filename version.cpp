@@ -23,6 +23,10 @@ void Version::removeApp(int appID) {
 	downloads.remove(app);
 }
 
+int Version::getTopApp(){
+	return downloads.getMax().getAppID();
+}
+
 void Version::increaseDownloads(int appID, int downloadIncrease) {
 	if (downloadIncrease <= 0 || appID <= 0) {
 		throw InvalidInput();

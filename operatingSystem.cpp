@@ -106,10 +106,9 @@ StatusType OS::increseDownloads(int appID, int downloadIncrease) {
 		return INVALID_INPUT;
 	}
 
-
 	try {
 		Application tempApp(appID, 1, 1);
-		if(applications.find(tempApp) == false){
+		if (applications.find(tempApp) == false) {
 			return FAILURE;
 		}
 		Application toRemove = applications.getData(tempApp);
@@ -129,21 +128,20 @@ StatusType OS::increseDownloads(int appID, int downloadIncrease) {
 	return SUCCESS;
 }
 
+StatusType OS::upgradeApplication(int appID) {
 
-StatusType OS::upgradeApplication(int appID){
-
-	if(appID <= 0){
+	if (appID <= 0) {
 		return INVALID_INPUT;
 	}
 
-	try{
+	try {
 		Application tempApp(appID, 1, 1);
-		if(applications.find(tempApp) == false){	//if such app doesn't exist
+		if (applications.find(tempApp) == false) {	//if such app doesn't exist
 			return FAILURE;
 		}
 		Application oldApp = applications.getData(tempApp); //get the real app with the real data
 		Version oldVer = getVersion(oldApp.getVersionCode());
-		if (oldVer.getVersionCode() == versions[0].getVersionCode()){	//if the version this app is in is the newest
+		if (oldVer.getVersionCode() == versions[0].getVersionCode()) { //if the version this app is in is the newest
 			return FAILURE;
 		}
 		//if you survived till now, then remove from old, find the next version and upgrade the app
@@ -151,16 +149,36 @@ StatusType OS::upgradeApplication(int appID){
 		applications.remove(oldApp);
 
 		int index = 0;
-		for(List <Version>::Iterator it = versions.begin(); (*it).getVersionCode() != oldVer.getVersionCode(); ++it){
+		for (List<Version>::Iterator it = versions.begin();
+				(*it).getVersionCode() != oldVer.getVersionCode(); ++it) {
 			index++;
 		}
-		Version newVer = versions[index-1];
+		Version newVer = versions[index - 1];
 		oldApp.upgradeApplication(newVer.getVersionCode());
 		newVer.addApp(oldApp);
 
-	}catch (std::bad_alloc& ba) {
+	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
 	}
 
+	return SUCCESS;
+}
+
+StatusType OS::getTopApp(int versionCode, int* appID) {
+
+	if (appID == NULL || versionCode == 0) {
+		return INVALID_INPUT;
+	}
+	//TODO is versionCode < 0 also an error?!?!
+	if (findVersion(versionCode) == false) {
+		return FAILURE;
+	}
+	try {
+		Version containing = getVersion(versionCode);
+		*appID = containing.getTopApp();
+
+	} catch (std::bad_alloc& ba) {
+		return ALLOCATION_ERROR;
+	}
 	return SUCCESS;
 }

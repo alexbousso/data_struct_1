@@ -80,6 +80,12 @@ public:
 
 	//TODO: think of more funcs
 
+
+	/*
+	 * returns the ID of the app with the heighst amount of downloads
+	 */
+	int getTopApp();
+
 private:
 	const int versionCode;
 
