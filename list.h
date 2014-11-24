@@ -38,13 +38,6 @@ public:
 	List operator =(List&);
 	~List();
 
-	/*searching for a specific data in the list
-	 * returns true if found and feels the ptr with the object
-	 *  and false if not-then the ptrs' value isn't relevant
-	 */
-	bool find(const T&);
-
-
 
 	// Remove last element from list
 	void popBack();
@@ -340,13 +333,6 @@ inline bool List<T>::Iterator::operator !=(const Iterator& it) const {
 	return !(*this == it);
 }
 
-template<typename T>
-bool List<T>::find(const T& element){
-	for(Iterator it = begin(); it != end(); ++it){
-
-	}
-	return true;
-}
 
 
 #endif /* LIST_H_ */

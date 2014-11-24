@@ -46,7 +46,7 @@ public:
 	StatusType upgradeApplication(int);
 
 	//returns all the apps in a specified version by their downloads
-	//TODO any other input needed here?
+	//TODO any other input needed here? should it be const function?!
 	StatusType getAllAppsByDownloads(int);
 
 	//updates the downloads of a certain group of apps

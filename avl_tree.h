@@ -378,10 +378,10 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::removeSingleChild(
 		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot->left != NULL && currentRoot->right == NULL) { //if current has only a left child
-		if(currentRoot == root){//if current is the rot of the tree then switch parts
+		if(currentRoot == root){//if current is the root of the tree then let the current's left child become the root
 			root = currentRoot->left;
 			root->dad = NULL;
-			currentRoot->dad = root;
+			currentRoot->dad = root;	//this is just for the later heights update
 		}
 		else{	//if it isn't the root:
 			if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) { //if current is it's dads' left child
