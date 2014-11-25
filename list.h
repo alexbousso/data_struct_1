@@ -101,8 +101,7 @@ public:
 	typename List<T>::Iterator& operator ++();
 	typename List<T>::Iterator operator ++(int);
 	T& operator *() const;
-	// QUESTION: Do we need this?
-//	T* operator ->() const;
+	T* operator ->() const;
 	bool operator ==(const Iterator&) const;
 	bool operator !=(const Iterator&) const;
 };

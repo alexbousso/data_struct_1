@@ -10,25 +10,7 @@
 
 #include "avl_tree.h"
 #include "application.h"
-
-/**
- * This class is used to compare two applications either by their download
- * count or by their ID.
- */
-class Compare {
-public:
-	enum TypeOfComparison {
-		FIRST_BY_ID, FIRST_BY_DOWNLOAD_COUNT
-	};
-	Compare(): type(FIRST_BY_ID){}
-	Compare(TypeOfComparison type) :
-			type(type) {
-	}
-	int operator ()(Application app1, Application app2) const;
-
-private:
-	TypeOfComparison type;
-};
+#include "helper_classes.h"
 
 class Version {
 public:
@@ -77,9 +59,6 @@ public:
 	 * ordered inverted by the download count.
 	 */
 	Application* getAllAppsByDownloads(int* numberOfApps);
-
-	//TODO: think of more funcs
-
 
 	/*
 	 * returns the ID of the app with the heighst amount of downloads

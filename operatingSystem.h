@@ -13,22 +13,29 @@
 #include "version.h"
 #include "application.h"
 #include "library1.h"
+#include "helper_classes.h"
 
+// TODO: Delete
+//class AppSorter{
+//public:
+//	int operator()(const Application& app1, const Application& app2) const{
+//		return app1.getAppID()-app2.getAppID();
+//	}
+//};
 
-class AppSorter{
-public:
-	int operator()(const Application& app1, const Application& app2) const{
-		return app1.getAppID()-app2.getAppID();
-	}
-};
-
-
-class OS{
+class OS {
 	List<Version> versions;
 
-	AVLTree<Application, AppSorter> applications;
+	AVLTree<Application, Compare> applications;
+
+	// TODO: Notice me!!!
+	AVLTree<Application, Compare> downloads;
+
 public:
-	OS(): versions(), applications(AppSorter()){}
+	OS() :
+			versions(), applications(Compare(Compare::FIRST_BY_ID)), downloads(
+					Compare(Compare::FIRST_BY_DOWNLOAD_COUNT)) {
+	}
 	~OS();
 
 	//adds a new version
@@ -49,20 +56,18 @@ public:
 
 	//returns all the apps in a specified version by their downloads
 	//TODO any other input needed here? should it be const function?!
-	StatusType getAllAppsByDownloads(int);
+	StatusType getAllAppsByDownloads(int, int**, int*);
 
 	//updates the downloads of a certain group of apps
 	StatusType updateDownloads(int, int);
 
+	// QUESTION: Why not private?
 	//returns true if a version with the given code is found in the list and false otherwise
 	bool findVersion(int);
 
+	// QUESTION: Why not private?
 	//if a version with the given code is found-return a reference to it
 	Version& getVersion(int);
-
 };
-
-
-
 
 #endif /* OPERATINGSYSTEM_H_ */

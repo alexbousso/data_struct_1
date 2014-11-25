@@ -10,6 +10,7 @@
 #include "application.h"
 #include "library1.h"
 #include "operatingSystem.h"
+#include "helper_classes.h"
 
 bool OS::findVersion(int versionCode) {
 	for (List<Version>::Iterator it = versions.begin(); it != versions.end();
@@ -170,6 +171,7 @@ StatusType OS::getTopApp(int versionCode, int* appID) {
 		return INVALID_INPUT;
 	}
 	//TODO is versionCode < 0 also an error?!?!
+	// No!! Need to return the most downloaded app in all versions.
 	if (findVersion(versionCode) == false) {
 		return FAILURE;
 	}
@@ -182,3 +184,119 @@ StatusType OS::getTopApp(int versionCode, int* appID) {
 	}
 	return SUCCESS;
 }
+
+StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
+		int *numOfApps) {
+	if (!apps || !numOfApps || versionCode == 0) {
+		apps = NULL;
+		numOfApps = -1;
+		return INVALID_INPUT;
+	}
+	if (versionCode > 0 && !findVersion(versionCode)) {
+		// TODO: Is this right?
+		apps = NULL;
+		numOfApps = -1;
+		return FAILURE;
+	}
+
+	if (versionCode < 0) {
+		if (downloads.size() == 0) {
+			numOfApps = 0;
+			apps = NULL;
+			// TODO: Is this right?
+			return SUCCESS;
+		}
+
+		*apps = (int *) malloc(sizeof(*apps) * downloads.size());
+		if (!apps) {
+			numOfApps = -1;
+			return ALLOCATION_ERROR;
+		}
+
+		AppsToList getApps;
+		downloads.inOrder<AppsToList>(getApps);
+		getApps.copyIDToArray(apps);
+	} else {
+		assert(versionCode > 0);
+		Version version(getVersion(versionCode));
+		assert(version.getVersionCode() == versionCode);
+		try {
+			*apps = version.getAllAppsByDownloads(numOfApps);
+		} catch (std::bad_alloc& e) {
+			apps = NULL;
+			numOfApps = -1;
+			return ALLOCATION_ERROR;
+		}
+	}
+	return SUCCESS;
+}
+
+/**
+ * This class updates the download counter of the desired application on a
+ * given tree
+ */
+class TreeDownloadsUpdater {
+public:
+	TreeDownloadsUpdater(AVLTree<Application, Compare>& tree, int groupBase,
+			int multiplyFactor) :
+			tree(tree), apps(), moduloEqualsZero(), moduloNotZero(), groupBase(
+					groupBase), multiplyFactor(multiplyFactor) {
+	}
+
+	void updateTree() {
+		AppsToList getApps;
+		tree.inOrder<AppsToList>(getApps);
+		List<Application> apps(getApps.getListOfApps());
+
+		splitBetweenLists();
+		multiplyModuloEqualsZero();
+		/**
+		 * TODO:
+		 * 		Build new empty tree
+		 * 		Merge lists into the empty tree
+		 */
+	}
+
+private:
+	AVLTree<Application, Compare>& tree;
+	List<Application> apps, moduloEqualsZero, moduloNotZero;
+	int groupBase, multiplyFactor;
+
+	void splitBetweenLists() {
+		for (List<Application>::Iterator it(apps.begin()); it != apps.end();
+				++it) {
+			if (it->getAppID() % groupBase == 0) {
+				moduloEqualsZero.pushBack(*it);
+			} else {
+				moduloNotZero.pushBack(*it);
+			}
+		}
+	}
+
+	void multiplyModuloEqualsZero() {
+		for (List<Application>::Iterator it(moduloEqualsZero.begin());
+				it != moduloEqualsZero.end(); ++it) {
+			it->increaseDownloads(
+					it->getDownloadCount() * (multiplyFactor - 1));
+		}
+	}
+};
+/* End of class TreeDownloadsUpdater */
+
+StatusType OS::updateDownloads(int groupBase, int multiplyFactor) {
+	if (multiplyFactor <= 0 || groupBase < 1) {
+		return INVALID_INPUT;
+	}
+
+	try {
+		TreeDownloadsUpdater updateApplications(applications, groupBase,
+				multiplyFactor);
+		TreeDownloadsUpdater updateDownloads(downloads, groupBase,
+				multiplyFactor);
+		// TODO: Finish to update the trees
+	} catch (std::bad_alloc& e) {
+		return ALLOCATION_ERROR;
+	}
+	return SUCCESS;
+}
+

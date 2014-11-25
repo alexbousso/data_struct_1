@@ -1,6 +1,8 @@
 #include "library1.h"
 #include "operatingSystem.h"
 
+// TODO: Add checks to DS
+
 void* Init() {
 	OS *os(new OS());
 	return (void *) os;
