@@ -54,7 +54,7 @@ StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
 		return INVALID_INPUT;
 	}
 	try {
-		//Version ver(versionCode);
+
 		Application app(appID, versionCode, downloadCount);
 		if (findVersion(versionCode) == false
 				|| applications.find(app) == true) { //if the app exists or there's no such version
@@ -62,12 +62,13 @@ StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
 		}
 		Version ver = getVersion(versionCode);
 		ver.addApp(app);		//add the app to the version (both trees)
-		applications.insert(app);	//add the app to the OS tree
+		applications.insert(app);	//add the app to the OS apps tree
+		downloads.insert(app);	//add to the OS downloads tree
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
-	} catch (...) {
+	} /*catch (...) {
 		//TODO what to do here?!?!? (could catch BadVersionCode)
-	}
+	}*/
 
 	return SUCCESS;
 }
@@ -86,11 +87,12 @@ StatusType OS::removeApplication(int appID) {
 		//Application toRemove = (Application)applications.find(app);
 		//Version ver(app.getVersionCode());
 
-		Application toRemove = applications.getData(app);
+		Application toRemove = applications.getData(app); //find the app we need to remove with all it's data
 
-		applications.remove(toRemove);	//remove from the OS tree
+		applications.remove(toRemove);	//remove from the OS app tree
+		downloads.remove(toRemove);		//remove from OS downloads tree
 
-		Version ver = getVersion(toRemove.getVersionCode());
+		Version ver = getVersion(toRemove.getVersionCode()); //find in the version containing the app we're removing
 
 		ver.removeApp(toRemove.getAppID());	//remove app from both trees in the version.
 
@@ -109,19 +111,23 @@ StatusType OS::increseDownloads(int appID, int downloadIncrease) {
 
 	try {
 		Application tempApp(appID, 1, 1);
-		if (applications.find(tempApp) == false) {
+		if (applications.find(tempApp) == false) { //if an app with such ID doesn't exist
 			return FAILURE;
 		}
 		Application toRemove = applications.getData(tempApp);
-		applications.remove(toRemove);//remove the relevant app from the OS tree
+		applications.remove(toRemove);//remove the relevant app from the OS app tree
+		downloads.remove(toRemove);	//remove the app from the OS downloads tree
 		Version containing = getVersion(toRemove.getVersionCode()); //find the version containing this app
-		containing.removeApp(appID);
+		containing.removeApp(appID); //remove the app from the version
+
+		//now' we'll create a new app with the updated info and insert it to all trees
 
 		Application updatedApp(appID, toRemove.getDownloadCount(),
 				toRemove.getVersionCode());	//creates a new app, the same as old
 		updatedApp.increaseDownloads(downloadIncrease);	//updates the relevant info
-		applications.insert(updatedApp);	//add to the OS tree
-		containing.addApp(updatedApp);	//add to both version trees
+		applications.insert(updatedApp);	//add to the OS app tree
+		downloads.insert((updatedApp));		//add to the OS downloads tree
+		containing.addApp(updatedApp);		 //add to both version trees
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
 	}
@@ -148,15 +154,19 @@ StatusType OS::upgradeApplication(int appID) {
 		//if you survived till now, then remove from old, find the next version and upgrade the app
 		oldVer.removeApp(tempApp.getAppID());
 		applications.remove(oldApp);
+		downloads.remove(oldApp);
 
 		int index = 0;
+		//now we'll find the index of the current version to use to find the index of the following one.
 		for (List<Version>::Iterator it = versions.begin();
 				(*it).getVersionCode() != oldVer.getVersionCode(); ++it) {
 			index++;
 		}
 		Version newVer = versions[index - 1];
 		oldApp.upgradeApplication(newVer.getVersionCode());
-		newVer.addApp(oldApp);
+		newVer.addApp(oldApp);		//add to the newer version
+		applications.insert(oldApp);	//add to the app tree in the OS
+		downloads.insert(oldApp);		//add to the downloads tree in the OS
 
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;

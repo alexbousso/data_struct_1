@@ -46,6 +46,12 @@ static bool testAVLTreeInsert() {
 
 	ASSERT_NO_THROW(tree.remove(2));
 	ASSERT_EQUALS(3, tree.getMin());
+	ASSERT_NO_THROW(tree.insert(1));
+	ASSERT_NO_THROW(tree.remove(3));
+
+	ASSERT_NO_THROW(tree.insert(6));
+	ASSERT_NO_THROW(tree.remove(10));
+	ASSERT_EQUALS(true, tree.checkTree());
 	tree.printTree();
 	return true;
 }
