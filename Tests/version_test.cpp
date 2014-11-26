@@ -68,11 +68,11 @@ static bool testIncreaseDownloads() {
 	return true;
 }
 
-static bool operator ==(Application app1, Application app2) {
-	return app1.getAppID() == app2.getAppID()
-			&& app1.getDownloadCount() == app2.getDownloadCount()
-			&& app1.getVersionCode() == app2.getVersionCode();
-}
+//static bool operator ==(Application app1, Application app2) {
+//	return app1.getAppID() == app2.getAppID()
+//			&& app1.getDownloadCount() == app2.getDownloadCount()
+//			&& app1.getVersionCode() == app2.getVersionCode();
+//}
 
 static bool testGetAllAppsByDownloads() {
 	Version ver(1);

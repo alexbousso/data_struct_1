@@ -58,7 +58,7 @@ public:
 	 * Returns an array initialized with malloc that contains every application
 	 * ordered inverted by the download count.
 	 */
-	Application* getAllAppsByDownloads(int* numberOfApps);
+	int* getAllAppsByDownloads(int* numberOfApps);
 
 	/*
 	 * returns the ID of the app with the heighst amount of downloads

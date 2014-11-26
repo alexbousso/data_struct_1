@@ -28,7 +28,8 @@ public:
 			versions(), applications(Compare(Compare::FIRST_BY_ID)), downloads(
 					Compare(Compare::FIRST_BY_DOWNLOAD_COUNT)) {
 	}
-	~OS();
+	~OS() {
+	}
 
 	//adds a new version
 	StatusType addVersion(int);

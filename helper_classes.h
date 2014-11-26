@@ -82,36 +82,36 @@ class TreeDownloadsUpdater {
 public:
 	TreeDownloadsUpdater(AVLTree<Application, Compare>& tree, int groupBase,
 			int multiplyFactor) :
-			tree(tree), apps(), moduloEqualsZero(), moduloNotZero(), groupBase(
+			tree(tree), mergedList(), moduloEqualsZero(), moduloNotZero(), groupBase(
 					groupBase), multiplyFactor(multiplyFactor) {
 	}
 
 	void updateTree() {
 		AppsToList getApps;
 		tree.inOrder<AppsToList>(getApps);
-		apps(getApps.getListOfApps());
+		List<Application> applications = getApps.getListOfApps();
 
-		splitBetweenLists();
+		splitBetweenLists(applications);
 		multiplyModuloEqualsZero();
 		mergeLists();
 		pushListToTree();
 
-		apps.reset();
+		applications.reset();
 		moduloEqualsZero.reset();
 		moduloNotZero.reset();
 	}
 
 private:
 	AVLTree<Application, Compare>& tree;
-	List<Application> apps, moduloEqualsZero, moduloNotZero;
+	List<Application> mergedList, moduloEqualsZero, moduloNotZero;
 	int groupBase, multiplyFactor;
 
 	/**
 	 * TODO: Description
 	 */
-	void splitBetweenLists() {
-		for (List<Application>::Iterator it(apps.begin()); it != apps.end();
-				++it) {
+	void splitBetweenLists(List<Application>& applications) {
+		for (List<Application>::Iterator it(applications.begin());
+				it != applications.end(); ++it) {
 			if (it->getAppID() % groupBase == 0) {
 				moduloEqualsZero.pushBack(*it);
 			} else {
@@ -138,8 +138,6 @@ private:
 	 * the order of the list while getting it from the tree.
 	 */
 	void mergeLists() {
-		apps.reset();
-
 		List<Application>::Iterator itModZero(moduloEqualsZero.begin());
 		List<Application>::Iterator itModNotZero(moduloNotZero.begin());
 
@@ -147,19 +145,19 @@ private:
 				&& itModNotZero != moduloNotZero.end()) {
 			assert(tree.compareElements(*itModZero, *itModNotZero) != 0);
 			if (tree.compareElements(*itModZero, *itModNotZero) > 0) {
-				apps.pushFront(*itModZero);
+				mergedList.pushFront(*itModZero);
 				++itModZero;
 			} else {
 				assert(tree.compareElements(*itModZero, *itModNotZero) < 0);
-				apps.pushFront(*itModNotZero);
+				mergedList.pushFront(*itModNotZero);
 				++itModNotZero;
 			}
 			while (itModZero != moduloEqualsZero.end()) {
-				apps.pushFront(*itModZero);
+				mergedList.pushFront(*itModZero);
 				++itModZero;
 			}
 			while (itModNotZero != moduloNotZero.end()) {
-				apps.pushFront(*itModNotZero);
+				mergedList.pushFront(*itModNotZero);
 				++itModNotZero;
 			}
 			assert(
@@ -173,8 +171,8 @@ private:
 	 */
 	class InsertAppsToTree {
 	public:
-		InsertAppsToTree() :
-				it(TreeDownloadsUpdater::apps.begin()) {
+		InsertAppsToTree(List<Application> mergedList) :
+				it(mergedList.begin()) {
 		}
 		void operator ()(Application &app) {
 			app.appID = it->appID;
@@ -191,7 +189,7 @@ private:
 	 * TODO: Description
 	 */
 	void pushListToTree() {
-		InsertAppsToTree insertAppsToTree;
+		InsertAppsToTree insertAppsToTree(mergedList);
 		tree.inOrder<InsertAppsToTree>(insertAppsToTree);
 	}
 };

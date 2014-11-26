@@ -11,6 +11,7 @@
 #include "library1.h"
 #include "operatingSystem.h"
 #include "helper_classes.h"
+#include <stdlib.h>
 
 bool OS::findVersion(int versionCode) {
 	for (List<Version>::Iterator it = versions.begin(); it != versions.end();
@@ -103,7 +104,7 @@ StatusType OS::removeApplication(int appID) {
 	return SUCCESS;
 }
 
-StatusType OS::increseDownloads(int appID, int downloadIncrease) {
+StatusType OS::increaseDownloads(int appID, int downloadIncrease) {
 
 	if (appID <= 0 || downloadIncrease <= 0) {
 		return INVALID_INPUT;
@@ -199,19 +200,19 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		int *numOfApps) {
 	if (!apps || !numOfApps || versionCode == 0) {
 		apps = NULL;
-		numOfApps = -1;
+		*numOfApps = -1;
 		return INVALID_INPUT;
 	}
 	if (versionCode > 0 && !findVersion(versionCode)) {
 		// TODO: Is this right?
 		apps = NULL;
-		numOfApps = -1;
+		*numOfApps = -1;
 		return FAILURE;
 	}
 
 	if (versionCode < 0) {
 		if (downloads.size() == 0) {
-			numOfApps = 0;
+			*numOfApps = 0;
 			apps = NULL;
 			// TODO: Is this right?
 			return SUCCESS;
@@ -219,7 +220,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 
 		*apps = (int *) malloc(sizeof(*apps) * downloads.size());
 		if (!apps) {
-			numOfApps = -1;
+			*numOfApps = -1;
 			return ALLOCATION_ERROR;
 		}
 
@@ -234,7 +235,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 			*apps = version.getAllAppsByDownloads(numOfApps);
 		} catch (std::bad_alloc& e) {
 			apps = NULL;
-			numOfApps = -1;
+			*numOfApps = -1;
 			return ALLOCATION_ERROR;
 		}
 	}
