@@ -11,7 +11,7 @@
 #include "exceptions.h"
 
 class Application {
-	const int appID;
+	int appID;
 	int versionCode;
 	int downloadCount;
 

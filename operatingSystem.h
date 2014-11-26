@@ -32,27 +32,29 @@ public:
 	}
 
 	//adds a new version
-	StatusType addVersion(int);
+	StatusType addVersion(int versionCode);
 
 	//adds a new app to a specific version
-	StatusType addApplication(int, int, int);
+	StatusType addApplication(int appID, int versionCode, int downloadCount);
 
-	StatusType removeApplication(int);
+	StatusType removeApplication(int appID);
 
 	//increases the download count on a specific app in the specified version
-	StatusType increaseDownloads(int, int);
+	StatusType increaseDownloads(int appID, int downloadIncrease);
 
 	//upgrades an application to a newer version
-	StatusType upgradeApplication(int);
+	StatusType upgradeApplication(int appID);
 
-	StatusType getTopApp(int, int*);
+	// TODO: Add definition
+	StatusType getTopApp(int versionCode, int* appID);
 
 	//returns all the apps in a specified version by their downloads
 	//TODO any other input needed here? should it be const function?!
-	StatusType getAllAppsByDownloads(int, int**, int*);
+	StatusType getAllAppsByDownloads(int versionCode, int **apps,
+			int *numOfApps);
 
 	//updates the downloads of a certain group of apps
-	StatusType updateDownloads(int, int);
+	StatusType updateDownloads(int groupBase, int multiplyFactor);
 
 	// QUESTION: Why not private?
 	//returns true if a version with the given code is found in the list and false otherwise

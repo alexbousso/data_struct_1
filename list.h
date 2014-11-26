@@ -316,11 +316,10 @@ inline T& List<T>::Iterator::operator *() const {
 	return node->data;
 }
 
-// QUESTION: Do we need this?
-//template<typename T>
-//inline T* List<T>::Iterator::operator ->() const {
-//	return &(node->data);
-//}
+template<typename T>
+inline T* List<T>::Iterator::operator ->() const {
+	return &(node->data);
+}
 
 template<typename T>
 inline bool List<T>::Iterator::operator ==(const Iterator& it) const {

@@ -57,22 +57,20 @@ public:
 	Compare(TypeOfComparison type) :
 			type(type) {
 	}
-	int operator ()(Application app1, Application app2) const;
+	int operator ()(Application app1, Application app2) const {
+		if (type == FIRST_BY_DOWNLOAD_COUNT) {
+			int downloadsDifference = app1.getDownloadCount()
+					- app2.getDownloadCount();
+			if (downloadsDifference != 0) {
+				return downloadsDifference;
+			}
+		}
+		return app1.getAppID() - app2.getAppID();
+	}
 
 private:
 	TypeOfComparison type;
 };
-
-int Compare::operator ()(Application app1, Application app2) const {
-	if (type == FIRST_BY_DOWNLOAD_COUNT) {
-		int downloadsDifference = app1.getDownloadCount()
-				- app2.getDownloadCount();
-		if (downloadsDifference != 0) {
-			return downloadsDifference;
-		}
-	}
-	return app1.getAppID() - app2.getAppID();
-}
 
 /**
  * This class updates the download counter of the desired application on a
