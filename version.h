@@ -65,6 +65,8 @@ public:
 	 */
 	int getTopApp();
 
+	friend class OS;
+
 private:
 	const int versionCode;
 
@@ -80,7 +82,8 @@ private:
 	AVLTree<Application, Compare> downloads;
 
 	/**
-	 * Receives an application ID and returns the correct application
+	 * Receives an application ID and returns the correct application from the
+	 * trees.
 	 */
 	Application findApplication(int appID);
 };

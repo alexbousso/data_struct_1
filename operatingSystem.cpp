@@ -231,58 +231,6 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 	return SUCCESS;
 }
 
-/**
- * This class updates the download counter of the desired application on a
- * given tree
- */
-class TreeDownloadsUpdater {
-public:
-	TreeDownloadsUpdater(AVLTree<Application, Compare>& tree, int groupBase,
-			int multiplyFactor) :
-			tree(tree), apps(), moduloEqualsZero(), moduloNotZero(), groupBase(
-					groupBase), multiplyFactor(multiplyFactor) {
-	}
-
-	void updateTree() {
-		AppsToList getApps;
-		tree.inOrder<AppsToList>(getApps);
-		List<Application> apps(getApps.getListOfApps());
-
-		splitBetweenLists();
-		multiplyModuloEqualsZero();
-		/**
-		 * TODO:
-		 * 		Build new empty tree
-		 * 		Merge lists into the empty tree
-		 */
-	}
-
-private:
-	AVLTree<Application, Compare>& tree;
-	List<Application> apps, moduloEqualsZero, moduloNotZero;
-	int groupBase, multiplyFactor;
-
-	void splitBetweenLists() {
-		for (List<Application>::Iterator it(apps.begin()); it != apps.end();
-				++it) {
-			if (it->getAppID() % groupBase == 0) {
-				moduloEqualsZero.pushBack(*it);
-			} else {
-				moduloNotZero.pushBack(*it);
-			}
-		}
-	}
-
-	void multiplyModuloEqualsZero() {
-		for (List<Application>::Iterator it(moduloEqualsZero.begin());
-				it != moduloEqualsZero.end(); ++it) {
-			it->increaseDownloads(
-					it->getDownloadCount() * (multiplyFactor - 1));
-		}
-	}
-};
-/* End of class TreeDownloadsUpdater */
-
 StatusType OS::updateDownloads(int groupBase, int multiplyFactor) {
 	if (multiplyFactor <= 0 || groupBase < 1) {
 		return INVALID_INPUT;
@@ -291,9 +239,20 @@ StatusType OS::updateDownloads(int groupBase, int multiplyFactor) {
 	try {
 		TreeDownloadsUpdater updateApplications(applications, groupBase,
 				multiplyFactor);
+		updateApplications.updateTree();
 		TreeDownloadsUpdater updateDownloads(downloads, groupBase,
 				multiplyFactor);
-		// TODO: Finish to update the trees
+		updateDownloads.updateTree();
+		for (List<Version>::Iterator it(versions.begin()); it != versions.end();
+				++it) {
+			TreeDownloadsUpdater updateApplications(it->apps, groupBase,
+					multiplyFactor);
+			updateApplications.updateTree();
+			TreeDownloadsUpdater updateDownloads(it->downloads, groupBase,
+					multiplyFactor);
+			updateDownloads.updateTree();
+		}
+
 	} catch (std::bad_alloc& e) {
 		return ALLOCATION_ERROR;
 	}

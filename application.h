@@ -48,6 +48,8 @@ public:
 	 * thrown.
 	 */
 	void upgradeApplication(const int newVersion);
+
+	friend class TreeDownloadsUpdater;
 };
 
 /*						****************************

@@ -15,14 +15,6 @@
 #include "library1.h"
 #include "helper_classes.h"
 
-// TODO: Delete
-//class AppSorter{
-//public:
-//	int operator()(const Application& app1, const Application& app2) const{
-//		return app1.getAppID()-app2.getAppID();
-//	}
-//};
-
 class OS {
 	List<Version> versions;
 
@@ -47,7 +39,7 @@ public:
 	StatusType removeApplication(int);
 
 	//increases the download count on a specific app in the specified version
-	StatusType increseDownloads(int, int);
+	StatusType increaseDownloads(int, int);
 
 	//upgrades an application to a newer version
 	StatusType upgradeApplication(int);
