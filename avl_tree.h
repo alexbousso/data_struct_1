@@ -310,12 +310,13 @@ void AVLTree<T, Compare>::rotateRight(
 	currentRoot->right->dad = currentRoot;
 
 	if (currentRoot->dad != NULL) {	//if there's a dad
-		if (currentRoot->dad->right == currentRoot->left) {	//check if we just switched the dad's right son
+		//TODO check this next line again!! i think it should be  currentRoot->right
+		if (currentRoot->dad->right == currentRoot->right) {	//check if we just switched the dad's right son
 			currentRoot->dad->right = currentRoot;
 		} else {	//we must have switched the dads' left son
 			assert(
 					compare(currentRoot->dad->left->data,
-							currentRoot->left->data) == 0);
+							currentRoot->right->data) == 0);
 			currentRoot->dad->left = currentRoot;
 		}
 	}
@@ -593,6 +594,7 @@ void AVLTree<T, Compare>::setMax(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	}
 	if (currentRoot->right == NULL) {//if you can't go right anymore-you're the rightmose therefor the max element!
 		max = currentRoot;
+		return;
 	}
 	setMax(currentRoot->right);
 }
