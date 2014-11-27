@@ -311,7 +311,7 @@ void AVLTree<T, Compare>::rotateRight(
 
 	if (currentRoot->dad != NULL) {	//if there's a dad
 		//TODO check this next line again!! i think it should be  currentRoot->right
-		if (currentRoot->dad->right == currentRoot->right) {	//check if we just switched the dad's right son
+		if (currentRoot->dad->right == currentRoot->right) {//check if we just switched the dad's right son
 			currentRoot->dad->right = currentRoot;
 		} else {	//we must have switched the dads' left son
 			assert(
@@ -392,7 +392,7 @@ void AVLTree<T, Compare>::removeSingleChild(
 		if (currentRoot == root) { //if current is the root of the tree then let the current's left child become the root
 			root = currentRoot->left;
 			root->dad = NULL;
-			currentRoot->dad = root;//this is just for the later heights update
+			currentRoot->dad = root; //this is just for the later heights update
 		} else {	//if it isn't the root:
 			if (compare(currentRoot->dad->left->data, currentRoot->data) == 0) { //if current is it's dads' left child
 				currentRoot->dad->left = currentRoot->left;
@@ -447,6 +447,7 @@ void AVLTree<T, Compare>::remove(AVLTree<T, Compare>::AVLNode* currentRoot) {
 		AVLNode* tempDad = currentRoot->dad;
 		if (tempDad == NULL) {					//if wer'e at the root:
 			delete (currentRoot);
+			root = NULL;
 			return;
 		}
 		if (tempDad->right == currentRoot) {//if current is it's dads right son.
@@ -484,7 +485,10 @@ void AVLTree<T, Compare>::remove(const T& element) {
 	AVLNode* toRemove = find(root, element);
 	remove(toRemove);
 	treeSize--;
-	setMax(root);
+	if (treeSize != 0) {
+		assert(root != NULL);
+		setMax(root);
+	}
 }
 
 template<typename T, class Compare>
@@ -592,7 +596,7 @@ void AVLTree<T, Compare>::setMax(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
 		throw DataDoesNotExist("tree");
 	}
-	if (currentRoot->right == NULL) {//if you can't go right anymore-you're the rightmose therefor the max element!
+	if (currentRoot->right == NULL) { //if you can't go right anymore-you're the rightmose therefor the max element!
 		max = currentRoot;
 		return;
 	}
@@ -629,7 +633,7 @@ public:
 			}
 		}
 		if (currentRoot->right != NULL) { //if u have a right son
-			if (currentRoot->right->dad != currentRoot) {//if your right sons' dad isn't you
+			if (currentRoot->right->dad != currentRoot) { //if your right sons' dad isn't you
 				throw BadTreeElement<T>(currentRoot->data);
 			}
 		}
