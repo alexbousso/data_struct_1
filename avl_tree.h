@@ -221,7 +221,6 @@ void AVLTree<T, Compare>::insert(const T& element) {
 	if (root == NULL) {
 		root = new AVLNode(element);
 		treeSize++;
-		return;
 	} else {
 		insert(root, element);
 	}
@@ -429,6 +428,7 @@ void AVLTree<T, Compare>::removeSingleChild(
 template<typename T, class Compare>
 bool AVLTree<T, Compare>::findIsIn(T& element) {
 	try {
+		// FIXME: Change the function's name
 		find(element);
 	} catch (DataDoesNotExist& noData) {
 		return false;
@@ -594,7 +594,7 @@ void AVLTree<T, Compare>::setMax(AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot->right == NULL) {//if you can't go right anymore-you're the rightmose therefor the max element!
 		max = currentRoot;
 	}
-	getMax(currentRoot->right);
+	setMax(currentRoot->right);
 }
 
 template<typename T, class Compare>

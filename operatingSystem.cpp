@@ -209,8 +209,12 @@ StatusType OS::getTopApp(int versionCode, int* appID) {
 StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		int *numOfApps) {
 	if (!apps || !numOfApps || versionCode == 0) {
-		apps = NULL;
-		*numOfApps = -1;
+		if (apps) {
+			apps = NULL;
+		}
+		if (numOfApps) {
+			*numOfApps = -1;
+		}
 		return INVALID_INPUT;
 	}
 	if (versionCode > 0 && !findVersion(versionCode)) {
