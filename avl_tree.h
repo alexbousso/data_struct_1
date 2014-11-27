@@ -154,7 +154,7 @@ public:
 	void inOrder(Function);
 
 	//returns bool if an element is in the tree or not
-	bool find(T&);
+	bool findIsIn(T&);
 
 	//activates the tree's comparison function
 	int compareElements(const T&, const T&);
@@ -427,7 +427,7 @@ void AVLTree<T, Compare>::removeSingleChild(
 }
 
 template<typename T, class Compare>
-bool AVLTree<T, Compare>::find(T& element) {
+bool AVLTree<T, Compare>::findIsIn(T& element) {
 	try {
 		find(element);
 	} catch (DataDoesNotExist& noData) {

@@ -51,14 +51,14 @@ StatusType OS::addVersion(int versionCode) {
 }
 
 StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
-	if (appID <= 0 || versionCode <= 0 || downloadCount <= 0) {
+	if (appID <= 0 || versionCode <= 0 || downloadCount < 0) {
 		return INVALID_INPUT;
 	}
 	try {
 
 		Application app(appID, versionCode, downloadCount);
 		if (findVersion(versionCode) == false
-				|| applications.find(app) == true) { //if the app exists or there's no such version
+				|| applications.findIsIn(app) == true) { //if the app exists or there's no such version
 			return FAILURE;
 		}
 		Version ver = getVersion(versionCode);
@@ -68,8 +68,8 @@ StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
 	} /*catch (...) {
-		//TODO what to do here?!?!? (could catch BadVersionCode)
-	}*/
+	 //TODO what to do here?!?!? (could catch BadVersionCode)
+	 }*/
 
 	return SUCCESS;
 }
@@ -81,12 +81,10 @@ StatusType OS::removeApplication(int appID) {
 	}
 	try {
 		Application app(appID, 1, 1);
-		if (applications.find(app) == false) {	//if the app doesnt exist
+		if (applications.findIsIn(app) == false) {	//if the app doesnt exist
 			return FAILURE;
 		}
 
-		//Application toRemove = (Application)applications.find(app);
-		//Version ver(app.getVersionCode());
 
 		Application toRemove = applications.getData(app); //find the app we need to remove with all it's data
 
@@ -112,11 +110,11 @@ StatusType OS::increaseDownloads(int appID, int downloadIncrease) {
 
 	try {
 		Application tempApp(appID, 1, 1);
-		if (applications.find(tempApp) == false) { //if an app with such ID doesn't exist
+		if (applications.findIsIn(tempApp) == false) { //if an app with such ID doesn't exist
 			return FAILURE;
 		}
 		Application toRemove = applications.getData(tempApp);
-		applications.remove(toRemove);//remove the relevant app from the OS app tree
+		applications.remove(toRemove); //remove the relevant app from the OS app tree
 		downloads.remove(toRemove);	//remove the app from the OS downloads tree
 		Version containing = getVersion(toRemove.getVersionCode()); //find the version containing this app
 		containing.removeApp(appID); //remove the app from the version
@@ -144,7 +142,7 @@ StatusType OS::upgradeApplication(int appID) {
 
 	try {
 		Application tempApp(appID, 1, 1);
-		if (applications.find(tempApp) == false) {	//if such app doesn't exist
+		if (applications.findIsIn(tempApp) == false) {//if such app doesn't exist
 			return FAILURE;
 		}
 		Application oldApp = applications.getData(tempApp); //get the real app with the real data
@@ -181,14 +179,26 @@ StatusType OS::getTopApp(int versionCode, int* appID) {
 	if (appID == NULL || versionCode == 0) {
 		return INVALID_INPUT;
 	}
-	//TODO is versionCode < 0 also an error?!?!
-	// No!! Need to return the most downloaded app in all versions.
-	if (findVersion(versionCode) == false) {
+
+	if (versionCode < 0) {	//if wer'e asked for the max in all the OS
+		if (downloads.size() == 0) {
+			*appID = -1;
+		} else {
+			*appID = downloads.getMax().getAppID();
+		}
+		return SUCCESS;
+	}
+
+	if (findVersion(versionCode) == false) { //if there's no such version
 		return FAILURE;
 	}
-	try {
+	try { //this is the case where: versionCode > 0
 		Version containing = getVersion(versionCode);
-		*appID = containing.getTopApp();
+		if (containing.downloads.size() == 0) {
+			*appID = -1;
+		} else {
+			*appID = containing.getTopApp();
+		}
 
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
