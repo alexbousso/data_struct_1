@@ -9,6 +9,10 @@
 #define APPLICATION_H_
 
 #include "exceptions.h"
+#include <iostream>
+
+using std::ostream;
+using std::endl;
 
 class Application {
 	int appID;
@@ -50,6 +54,11 @@ public:
 	void upgradeApplication(const int newVersion);
 
 	friend class TreeDownloadsUpdater;
+	friend ostream& operator <<(ostream& os, const Application& app) {
+		return os << "appID: " << app.appID << ", versionCode: "
+				<< app.versionCode << ", downloadCount: " << app.downloadCount
+				<< endl;
+	}
 };
 
 /*						****************************

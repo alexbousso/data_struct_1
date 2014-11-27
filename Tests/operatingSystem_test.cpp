@@ -278,28 +278,6 @@ static bool testGetAllAppsByDownloads() {
 	return true;
 }
 
-/**
- * TODO: Delete
- * static void setUp(OS& os) {
-	os.addVersion(2);
-	os.addVersion(5);
-	os.addVersion(8);
-
-	os.addApplication(14, 8, 1);
-	os.addApplication(10, 2, 10); => 100
-	os.addApplication(11, 2, 0); => 0
-	os.addApplication(1, 5, 15);
-	os.addApplication(110, 2, 210); => 630 => 6300
-	os.addApplication(2, 8, 4);
-	os.addApplication(3, 2, 109);
-	os.addApplication(30, 5, 42); => 420
-	os.addApplication(33, 5, 42); => 126
-	os.addApplication(31, 5, 42);
-	os.addApplication(32, 5, 42);
-	os.addApplication(15, 2, 10);
-}
- */
-
 static bool testUpdateDownloads() {
 	OS os;
 	int *apps, numOfApps;

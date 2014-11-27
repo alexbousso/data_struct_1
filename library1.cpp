@@ -1,7 +1,6 @@
 #include "library1.h"
 #include "operatingSystem.h"
 
-// TODO: Add checks to DS
 #define CHECK_NULL(arg) if (!(arg)) return INVALID_INPUT
 
 void* Init() {
@@ -53,6 +52,11 @@ StatusType GetAllAppsByDownloads(void *DS, int versionCode, int **apps,
 	}
 	return (static_cast<OS *>(DS))->getAllAppsByDownloads(versionCode, apps,
 			numOfApps);
+}
+
+StatusType UpdateDownloads(void *DS, int groupBase, int multiplyFactor) {
+	CHECK_NULL(DS);
+	return (static_cast<OS *>(DS))->updateDownloads(groupBase, multiplyFactor);
 }
 
 void Quit(void** DS) {

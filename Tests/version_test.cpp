@@ -68,12 +68,6 @@ static bool testIncreaseDownloads() {
 	return true;
 }
 
-//static bool operator ==(Application app1, Application app2) {
-//	return app1.getAppID() == app2.getAppID()
-//			&& app1.getDownloadCount() == app2.getDownloadCount()
-//			&& app1.getVersionCode() == app2.getVersionCode();
-//}
-
 static bool testGetAllAppsByDownloads() {
 	Version ver(1);
 	Application app1(100, 1, 6);
@@ -87,12 +81,12 @@ static bool testGetAllAppsByDownloads() {
 	ASSERT_NO_THROW(ver.addApp(app1));
 	ASSERT_NO_THROW(ver.addApp(app2));
 	ASSERT_NO_THROW(ver.addApp(app3));
-	Application* apps(ver.getAllAppsByDownloads(&numOfApps));
+	int* apps(ver.getAllAppsByDownloads(&numOfApps));
 	ASSERT_EQUALS(numOfApps, 3);
 
-	ASSERT_EQUALS(apps[0], app1);
-	ASSERT_EQUALS(apps[1], app2);
-	ASSERT_EQUALS(apps[2], app3);
+	ASSERT_EQUALS(apps[0], app1.getAppID());
+	ASSERT_EQUALS(apps[1], app2.getAppID());
+	ASSERT_EQUALS(apps[2], app3.getAppID());
 
 	free(apps);
 	return true;

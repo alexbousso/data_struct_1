@@ -11,6 +11,9 @@
 #include "avl_tree.h"
 #include "application.h"
 #include "helper_classes.h"
+#include <iostream>
+
+using std::ostream;
 
 class Version {
 public:
@@ -66,6 +69,7 @@ public:
 	int getTopApp();
 
 	friend class OS;
+	friend ostream& operator <<(ostream&, const Version&);
 
 private:
 	const int versionCode;

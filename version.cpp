@@ -3,6 +3,10 @@
 #include "list.h"
 #include "helper_classes.h"
 #include <stdlib.h>
+#include <iostream>
+
+using std::ostream;
+using std::endl;
 
 void Version::addApp(Application app) {
 	if (app.getVersionCode() != versionCode) {
@@ -56,3 +60,13 @@ int* Version::getAllAppsByDownloads(int* numberOfApps) {
 	return appsByDownloads;
 }
 
+ostream& operator <<(ostream& os, const Version& ver) {
+	os << "Version: " << ver.versionCode;
+	os << "\tapps tree:      ";
+	ver.apps.printTree();
+	os << endl;
+	os << "\tdownloads tree: ";
+	ver.downloads.printTree();
+	os << endl;
+	return os;
+}

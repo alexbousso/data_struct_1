@@ -62,7 +62,7 @@ class AVLTree {
 
 	//pre-order walk
 	template<typename Function>
-	void preOrder(AVLNode*, Function);
+	void preOrder(AVLNode*, Function) const;
 
 	//in-order walk
 	template<typename Function>
@@ -138,7 +138,7 @@ public:
 	int size() const;
 
 	//prints the whole tree
-	void printTree();
+	void printTree() const;
 
 	//check tree correctness
 	bool checkTree();
@@ -670,7 +670,7 @@ bool AVLTree<T, Compare>::checkTree() {
 template<typename T, class Compare>
 template<typename Function>
 void AVLTree<T, Compare>::preOrder(AVLTree<T, Compare>::AVLNode* currentRoot,
-		Function func) {
+		Function func) const {
 	if (currentRoot == NULL) {
 		return;
 	}
@@ -681,7 +681,7 @@ void AVLTree<T, Compare>::preOrder(AVLTree<T, Compare>::AVLNode* currentRoot,
 }
 
 template<typename T, class Compare>
-void AVLTree<T, Compare>::printTree() {
+void AVLTree<T, Compare>::printTree() const {
 	if (root != NULL) {
 		cout << "the root of the tree is: " << root->data << "\n";
 	}
