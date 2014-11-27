@@ -209,7 +209,7 @@ void List<T>::pushFront(const T& data) {
 	}
 
 	newNode->next = first;
-	first->next->previous = newNode;
+	newNode->next->previous = newNode;
 	newNode->previous = NULL;
 	first = newNode;
 	listSize++;

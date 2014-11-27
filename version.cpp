@@ -43,7 +43,7 @@ void Version::increaseDownloads(int appID, int downloadIncrease) {
 
 int* Version::getAllAppsByDownloads(int* numberOfApps) {
 	if (apps.size() == 0) {
-		numberOfApps = 0;
+		*numberOfApps = 0;
 		return NULL;
 	}
 
@@ -56,6 +56,8 @@ int* Version::getAllAppsByDownloads(int* numberOfApps) {
 	AppsToList getApps;
 	downloads.inOrder<AppsToList>(getApps);
 	getApps.copyIDToArray(&appsByDownloads);
+
+	*numberOfApps = downloads.size();
 
 	return appsByDownloads;
 }

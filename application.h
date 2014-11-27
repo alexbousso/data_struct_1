@@ -87,7 +87,10 @@ inline Application::Application(const Application& copy) :
 
 // TODO: Add tests
 inline Application Application::operator =(Application & copy) {
-	return Application(copy.appID, copy.downloadCount, copy.versionCode);
+	appID = copy.appID;
+	downloadCount = copy.downloadCount;
+	versionCode = copy.versionCode;
+	return *this;
 }
 
 inline int Application::getAppID() const {

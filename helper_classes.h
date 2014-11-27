@@ -20,6 +20,9 @@ public:
 	AppsToList() :
 			apps() {
 	}
+	/**
+	 * The function returns the number of elements on the array.
+	 */
 	void copyIDToArray(int** array) {
 		int i(0);
 		for (List<Application>::Iterator it(apps.begin()); it != apps.end();

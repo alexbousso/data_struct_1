@@ -61,7 +61,7 @@ StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
 				|| applications.findIsIn(app) == true) { //if the app exists or there's no such version
 			return FAILURE;
 		}
-		Version ver = getVersion(versionCode);
+		Version& ver = getVersion(versionCode);
 		ver.addApp(app);		//add the app to the version (both trees)
 		applications.insert(app);	//add the app to the OS apps tree
 		downloads.insert(app);	//add to the OS downloads tree
@@ -85,13 +85,12 @@ StatusType OS::removeApplication(int appID) {
 			return FAILURE;
 		}
 
-
 		Application toRemove = applications.getData(app); //find the app we need to remove with all it's data
 
 		applications.remove(toRemove);	//remove from the OS app tree
 		downloads.remove(toRemove);		//remove from OS downloads tree
 
-		Version ver = getVersion(toRemove.getVersionCode()); //find in the version containing the app we're removing
+		Version& ver = getVersion(toRemove.getVersionCode()); //find in the version containing the app we're removing
 
 		ver.removeApp(toRemove.getAppID());	//remove app from both trees in the version.
 
@@ -116,13 +115,13 @@ StatusType OS::increaseDownloads(int appID, int downloadIncrease) {
 		Application toRemove = applications.getData(tempApp);
 		applications.remove(toRemove); //remove the relevant app from the OS app tree
 		downloads.remove(toRemove);	//remove the app from the OS downloads tree
-		Version containing = getVersion(toRemove.getVersionCode()); //find the version containing this app
+		Version& containing = getVersion(toRemove.getVersionCode()); //find the version containing this app
 		containing.removeApp(appID); //remove the app from the version
 
 		//now' we'll create a new app with the updated info and insert it to all trees
 
-		Application updatedApp(appID, toRemove.getDownloadCount(),
-				toRemove.getVersionCode());	//creates a new app, the same as old
+		Application updatedApp(appID, toRemove.getVersionCode(),
+				toRemove.getDownloadCount());//creates a new app, the same as old
 		updatedApp.increaseDownloads(downloadIncrease);	//updates the relevant info
 		applications.insert(updatedApp);	//add to the OS app tree
 		downloads.insert((updatedApp));		//add to the OS downloads tree
@@ -146,7 +145,7 @@ StatusType OS::upgradeApplication(int appID) {
 			return FAILURE;
 		}
 		Application oldApp = applications.getData(tempApp); //get the real app with the real data
-		Version oldVer = getVersion(oldApp.getVersionCode());
+		Version& oldVer = getVersion(oldApp.getVersionCode());
 		if (oldVer.getVersionCode() == versions[0].getVersionCode()) { //if the version this app is in is the newest
 			return FAILURE;
 		}
@@ -161,7 +160,7 @@ StatusType OS::upgradeApplication(int appID) {
 				(*it).getVersionCode() != oldVer.getVersionCode(); ++it) {
 			index++;
 		}
-		Version newVer = versions[index - 1];
+		Version& newVer = versions[index - 1];
 		oldApp.upgradeApplication(newVer.getVersionCode());
 		newVer.addApp(oldApp);		//add to the newer version
 		applications.insert(oldApp);	//add to the app tree in the OS
@@ -193,7 +192,7 @@ StatusType OS::getTopApp(int versionCode, int* appID) {
 		return FAILURE;
 	}
 	try { //this is the case where: versionCode > 0
-		Version containing = getVersion(versionCode);
+		Version& containing = getVersion(versionCode);
 		if (containing.downloads.size() == 0) {
 			*appID = -1;
 		} else {
@@ -243,7 +242,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		getApps.copyIDToArray(apps);
 	} else {
 		assert(versionCode > 0);
-		Version version(getVersion(versionCode));
+		Version& version(getVersion(versionCode));
 		assert(version.getVersionCode() == versionCode);
 		try {
 			*apps = version.getAllAppsByDownloads(numOfApps);

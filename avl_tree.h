@@ -66,7 +66,7 @@ class AVLTree {
 
 	//in-order walk
 	template<typename Function>
-	void inOrder(AVLNode*, Function);
+	void inOrder(AVLNode*, Function&);
 
 	//in-order walk operating on the node
 	template<typename Function>
@@ -151,7 +151,7 @@ public:
 
 	//in-order walk
 	template<typename Function>
-	void inOrder(Function);
+	void inOrder(Function&);
 
 	//returns bool if an element is in the tree or not
 	bool findIsIn(T&);
@@ -695,7 +695,7 @@ void AVLTree<T, Compare>::printTree() const {
 
 template<typename T, class Compare>
 template<typename Function>
-void AVLTree<T, Compare>::inOrder(AVLNode* currentRoot, Function func) {
+void AVLTree<T, Compare>::inOrder(AVLNode* currentRoot, Function &func) {
 	if (currentRoot == NULL) {
 		return;
 	}
@@ -717,7 +717,7 @@ void AVLTree<T, Compare>::postOrderNode(AVLNode* currentRoot, Function func) {
 
 template<typename T, class Compare>
 template<typename Function>
-void AVLTree<T, Compare>::inOrder(Function func) {
+void AVLTree<T, Compare>::inOrder(Function &func) {
 	inOrder(root, func);
 }
 

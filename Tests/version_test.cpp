@@ -84,9 +84,9 @@ static bool testGetAllAppsByDownloads() {
 	int* apps(ver.getAllAppsByDownloads(&numOfApps));
 	ASSERT_EQUALS(numOfApps, 3);
 
-	ASSERT_EQUALS(apps[0], app1.getAppID());
+	ASSERT_EQUALS(apps[0], app3.getAppID());
 	ASSERT_EQUALS(apps[1], app2.getAppID());
-	ASSERT_EQUALS(apps[2], app3.getAppID());
+	ASSERT_EQUALS(apps[2], app1.getAppID());
 
 	free(apps);
 	return true;
