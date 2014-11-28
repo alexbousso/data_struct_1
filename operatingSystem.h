@@ -63,6 +63,10 @@ public:
 	// QUESTION: Why not private?
 	//if a version with the given code is found-return a reference to it
 	Version& getVersion(int);
+
+	// TODO: Add definition
+	void printTreeDownloads(int versionCode);
+	void printTreeApplications(int versionCode);
 };
 
 #endif /* OPERATINGSYSTEM_H_ */

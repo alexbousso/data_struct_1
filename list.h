@@ -11,6 +11,9 @@
 #include "exceptions.h"
 #include <cassert>		// For assert#include <iostream>
 
+using std::cout;
+using std::endl;
+
 template<typename T>
 class List {
 	class Node;
@@ -34,7 +37,7 @@ public:
 	Iterator end();
 
 	List();
-	List(const List&);
+	List(List&);
 	List operator =(List&);
 	~List();
 
@@ -60,6 +63,9 @@ public:
 
 	// Resets the entire list
 	void reset();
+
+	// TODO: Definition
+	void printList();
 
 private:
 	Iterator begin() const;
@@ -125,9 +131,9 @@ inline List<T>::List() :
 
 // FIXME: Check if this is right
 template<typename T>
-inline List<T>::List(const List& copy) :
+inline List<T>::List(List& copy) :
 		first(new List<T>::Node), last(first), listSize(0) {
-	for (List<T>::Iterator it = begin(); it != end(); ++it) {
+	for (List<T>::Iterator it = copy.begin(); it != copy.end(); ++it) {
 		pushBack(*it);
 	}
 }
@@ -279,6 +285,15 @@ void List<T>::reset() {
 		popFront();
 	}
 	assert(last == first);
+}
+
+template<typename T>
+void List<T>::printList() {
+	cout << "List printed by order:" << endl;
+	for (List<T>::Iterator it(begin()); it != end(); ++it) {
+		cout << "\t" << *it << endl;
+	}
+	cout << "End of list." << endl;
 }
 
 /*

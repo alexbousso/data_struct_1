@@ -30,7 +30,7 @@ public:
 			(*array)[i] = it->getAppID();
 		}
 	}
-	List<Application> getListOfApps() {
+	List<Application>& getListOfApps() {
 		return apps;
 	}
 
@@ -67,8 +67,11 @@ public:
 			if (downloadsDifference != 0) {
 				return downloadsDifference;
 			}
+			return app2.getAppID() - app1.getAppID();
+		} else {
+			assert(type == FIRST_BY_ID);
+			return app1.getAppID() - app2.getAppID();
 		}
-		return app1.getAppID() - app2.getAppID();
 	}
 
 private:
@@ -90,14 +93,12 @@ public:
 	void updateTree() {
 		AppsToList getApps;
 		tree.inOrder<AppsToList>(getApps);
-		List<Application> applications = getApps.getListOfApps();
 
-		splitBetweenLists(applications);
+		splitBetweenLists(getApps.getListOfApps());
 		multiplyModuloEqualsZero();
 		mergeLists();
 		pushListToTree();
 
-		applications.reset();
 		moduloEqualsZero.reset();
 		moduloNotZero.reset();
 	}
@@ -153,18 +154,18 @@ private:
 				mergedList.pushFront(*itModNotZero);
 				++itModNotZero;
 			}
-			while (itModZero != moduloEqualsZero.end()) {
-				mergedList.pushFront(*itModZero);
-				++itModZero;
-			}
-			while (itModNotZero != moduloNotZero.end()) {
-				mergedList.pushFront(*itModNotZero);
-				++itModNotZero;
-			}
-			assert(
-					itModZero == moduloEqualsZero.end()
-							&& itModNotZero == moduloNotZero.end());
 		}
+		while (itModZero != moduloEqualsZero.end()) {
+			mergedList.pushFront(*itModZero);
+			++itModZero;
+		}
+		while (itModNotZero != moduloNotZero.end()) {
+			mergedList.pushFront(*itModNotZero);
+			++itModNotZero;
+		}
+		assert(
+				itModZero == moduloEqualsZero.end()
+						&& itModNotZero == moduloNotZero.end());
 	}
 
 	/**
@@ -172,7 +173,7 @@ private:
 	 */
 	class InsertAppsToTree {
 	public:
-		InsertAppsToTree(List<Application> mergedList) :
+		InsertAppsToTree(List<Application>& mergedList) :
 				it(mergedList.begin()) {
 		}
 		void operator ()(Application &app) {

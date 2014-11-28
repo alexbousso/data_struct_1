@@ -209,7 +209,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		int *numOfApps) {
 	if (!apps || !numOfApps || versionCode == 0) {
 		if (apps) {
-			apps = NULL;
+			*apps = NULL;
 		}
 		if (numOfApps) {
 			*numOfApps = -1;
@@ -218,7 +218,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 	}
 	if (versionCode > 0 && !findVersion(versionCode)) {
 		// TODO: Is this right?
-		apps = NULL;
+		*apps = NULL;
 		*numOfApps = -1;
 		return FAILURE;
 	}
@@ -240,6 +240,8 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		AppsToList getApps;
 		downloads.inOrder<AppsToList>(getApps);
 		getApps.copyIDToArray(apps);
+
+		*numOfApps = downloads.size();
 	} else {
 		assert(versionCode > 0);
 		Version& version(getVersion(versionCode));
@@ -251,6 +253,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 			*numOfApps = -1;
 			return ALLOCATION_ERROR;
 		}
+		*numOfApps = version.downloads.size();
 	}
 	return SUCCESS;
 }
@@ -283,3 +286,34 @@ StatusType OS::updateDownloads(int groupBase, int multiplyFactor) {
 	return SUCCESS;
 }
 
+void OS::printTreeDownloads(int versionCode) {
+	if (versionCode < 0) {
+		downloads.printTree();
+	}
+	if (versionCode == 0) {
+		return;
+	}
+	try {
+		Version ver(getVersion(versionCode));
+		ver.downloads.printTree();
+	} catch (DataDoesNotExist& e) {
+		std::cerr << "Data does not exist!";
+	}
+
+}
+
+void OS::printTreeApplications(int versionCode) {
+	if (versionCode < 0) {
+		applications.printTree();
+	}
+	if (versionCode == 0) {
+		return;
+	}
+	try {
+		Version ver(getVersion(versionCode));
+		ver.apps.printTree();
+	} catch (DataDoesNotExist& e) {
+		std::cerr << "Data does not exist!";
+	}
+
+}

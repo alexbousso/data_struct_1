@@ -64,4 +64,5 @@ void Quit(void** DS) {
 		return;
 	}
 	delete static_cast<OS *>(*DS);
+	*DS = NULL;
 }

@@ -203,7 +203,7 @@ static bool testGetTopApp() {
 	ASSERT_EQUALS(appID, 31);
 	ASSERT_SUCCESS(os.removeApplication(31));
 	ASSERT_SUCCESS(os.getTopApp(5, &appID));
-	ASSERT_EQUALS(appID, 33);
+	ASSERT_EQUALS(appID, 30);
 
 	ASSERT_SUCCESS(os.upgradeApplication(110));
 	ASSERT_SUCCESS(os.getTopApp(5, &appID));
@@ -247,7 +247,7 @@ static bool testGetAllAppsByDownloads() {
 	ASSERT_EQUALS(numOfApps, NUMBER_OF_APPS);
 	ASSERT_EQUALS(apps[0], 110);
 	ASSERT_EQUALS(apps[NUMBER_OF_APPS - 1], 11);
-	ASSERT_EQUALS(apps[3], 32);
+	ASSERT_EQUALS(apps[3], 31);
 	free(apps);
 
 	ASSERT_SUCCESS(os.getAllAppsByDownloads(8, &apps, &numOfApps));
@@ -257,24 +257,24 @@ static bool testGetAllAppsByDownloads() {
 	free(apps);
 
 	ASSERT_SUCCESS(os.getAllAppsByDownloads(5, &apps, &numOfApps));
-	ASSERT_EQUALS(apps[0], 33);
-	ASSERT_EQUALS(apps[2], 31);
+	ASSERT_EQUALS(apps[0], 30);
+	ASSERT_EQUALS(apps[2], 32);
 	ASSERT_EQUALS(apps[4], 1);
 	ASSERT_EQUALS(numOfApps, 5);
 	free(apps);
 
-	ASSERT_SUCCESS(os.upgradeApplication(32));
+	ASSERT_SUCCESS(os.upgradeApplication(31));
 	ASSERT_SUCCESS(os.getAllAppsByDownloads(5, &apps, &numOfApps));
-	ASSERT_EQUALS(apps[0], 33);
-	ASSERT_EQUALS(apps[1], 31);
+	ASSERT_EQUALS(apps[0], 30);
+	ASSERT_EQUALS(apps[1], 32);
 	ASSERT_EQUALS(apps[3], 1);
 	ASSERT_EQUALS(numOfApps, 4);
 	free(apps);
 
-	ASSERT_SUCCESS(os.increaseDownloads(31, 100));
+	ASSERT_SUCCESS(os.increaseDownloads(32, 100));
 	ASSERT_SUCCESS(os.getAllAppsByDownloads(5, &apps, &numOfApps));
-	ASSERT_EQUALS(apps[0], 31);
-	ASSERT_EQUALS(apps[1], 33);
+	ASSERT_EQUALS(apps[0], 32);
+	ASSERT_EQUALS(apps[1], 30);
 	ASSERT_EQUALS(apps[3], 1);
 	ASSERT_EQUALS(numOfApps, 4);
 	free(apps);
@@ -283,8 +283,8 @@ static bool testGetAllAppsByDownloads() {
 	ASSERT_SUCCESS(os.increaseDownloads(14, 3));
 	ASSERT_SUCCESS(os.getAllAppsByDownloads(-1, &apps, &numOfApps));
 	ASSERT_EQUALS(numOfApps, NUMBER_OF_APPS);
-	ASSERT_EQUALS(apps[0], 31);
-	ASSERT_EQUALS(apps[NUMBER_OF_APPS - 1], 2);
+	ASSERT_EQUALS(apps[1], 32);
+	ASSERT_EQUALS(apps[NUMBER_OF_APPS - 1], 14);
 	free(apps);
 
 	return true;
@@ -294,10 +294,9 @@ static bool testUpdateDownloads() {
 	OS os;
 	int *apps, numOfApps;
 
-	ASSERT_INVALID_INPUT(os.updateDownloads(1, 3));
 	ASSERT_INVALID_INPUT(os.updateDownloads(0, 3));
 	ASSERT_INVALID_INPUT(os.updateDownloads(-2, 2));
-	ASSERT_INVALID_INPUT(os.updateDownloads(3, -1));
+	ASSERT_INVALID_INPUT(os.updateDownloads(3, 0));
 
 	ASSERT_SUCCESS(os.updateDownloads(2, 2));
 
