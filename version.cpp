@@ -62,6 +62,9 @@ int* Version::getAllAppsByDownloads(int* numberOfApps) {
 	return appsByDownloads;
 }
 
+int Version::getNumOfApps(){
+	return apps.size();
+}
 ostream& operator <<(ostream& os, const Version& ver) {
 	os << "Version: " << ver.versionCode;
 	os << "\tapps tree:      ";

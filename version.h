@@ -68,6 +68,9 @@ public:
 	 */
 	int getTopApp();
 
+	//returns how many apps there are in the version right now
+	int getNumOfApps();
+
 	friend class OS;
 	friend ostream& operator <<(ostream&, const Version&);
 

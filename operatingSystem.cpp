@@ -121,7 +121,7 @@ StatusType OS::increaseDownloads(int appID, int downloadIncrease) {
 		//now' we'll create a new app with the updated info and insert it to all trees
 
 		Application updatedApp(appID, toRemove.getVersionCode(),
-				toRemove.getDownloadCount());//creates a new app, the same as old
+				toRemove.getDownloadCount()); //creates a new app, the same as old
 		updatedApp.increaseDownloads(downloadIncrease);	//updates the relevant info
 		applications.insert(updatedApp);	//add to the OS app tree
 		downloads.insert((updatedApp));		//add to the OS downloads tree
@@ -216,17 +216,29 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		}
 		return INVALID_INPUT;
 	}
+
+//TODO this changed!!!!
 	if (versionCode > 0 && !findVersion(versionCode)) {
 		// TODO: Is this right?
-		*apps = NULL;
-		*numOfApps = -1;
+		//*apps = NULL;
+		//*numOfApps = -1;
 		return FAILURE;
+	}
+
+	if (versionCode > 0 && findVersion(versionCode)
+			&& (getVersion(versionCode).getNumOfApps() == 0)) {
+
+		// TODO: Is this right?
+		*apps = NULL;
+		*numOfApps = 0;
+		return SUCCESS;
+
 	}
 
 	if (versionCode < 0) {
 		if (downloads.size() == 0) {
 			*numOfApps = 0;
-			apps = NULL;
+			*apps = NULL;
 			// TODO: Is this right?
 			return SUCCESS;
 		}
