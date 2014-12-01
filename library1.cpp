@@ -4,8 +4,12 @@
 #define CHECK_NULL(arg) if (!(arg)) return INVALID_INPUT
 
 void* Init() {
-	OS *os(new OS());
-	return (void *) os;
+	try {
+		OS *os(new OS());
+		return (void *) os;
+	} catch (std::bad_alloc& e) {
+		return NULL;
+	}
 }
 
 StatusType AddVersion(void *DS, int versionCode) {

@@ -41,7 +41,6 @@ public:
 	List operator =(List&);
 	~List();
 
-
 	// Remove last element from list
 	void popBack();
 
@@ -86,10 +85,6 @@ class List<T>::Node {
 	Node(T data) :
 			data(data), next(NULL), previous(NULL) {
 	}
-
-	//TODO
-//	Node(const Node&);
-//	Node operator =(const Node&);
 };
 
 /**
@@ -168,11 +163,6 @@ void List<T>::popBack() {
 
 template<typename T>
 void List<T>::pushBack(const T& data) {
-	// QUESTION:Do we need this?
-//	if (!data) {
-//		throw InvalidInput();
-//	}
-
 	List<T>::Node* newNode(new List<T>::Node(data));
 
 	if (listSize == 0) {
@@ -202,11 +192,6 @@ void List<T>::popFront() {
 
 template<typename T>
 void List<T>::pushFront(const T& data) {
-	// QUESTION:Do we need this?
-//	if (!data) {
-//		throw InvalidInput();
-//	}
-
 	List<T>::Node* newNode(new List<T>::Node(data));
 
 	if (listSize == 0) {
@@ -297,16 +282,6 @@ void List<T>::printList() {
 }
 
 /*
- *								CLASS NODE
- */
-
-// QUESTION: Why do we need this?
-//template<typename T>
-//inline Node Node<T>::operator =(const Node& other) {
-//	data = other.data;
-//	return *this;
-//}
-/*
  *								CLASS ITERATOR
  */
 
@@ -345,8 +320,6 @@ template<typename T>
 inline bool List<T>::Iterator::operator !=(const Iterator& it) const {
 	return !(*this == it);
 }
-
-
 
 #endif /* LIST_H_ */
 

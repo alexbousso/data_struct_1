@@ -17,10 +17,7 @@
 
 class OS {
 	List<Version> versions;
-
 	AVLTree<Application, Compare> applications;
-
-	// TODO: Notice me!!!
 	AVLTree<Application, Compare> downloads;
 
 public:
@@ -45,7 +42,7 @@ public:
 	//upgrades an application to a newer version
 	StatusType upgradeApplication(int appID);
 
-	// TODO: Add definition
+	// TODO: Add description
 	StatusType getTopApp(int versionCode, int* appID);
 
 	//returns all the apps in a specified version by their downloads
@@ -56,15 +53,13 @@ public:
 	//updates the downloads of a certain group of apps
 	StatusType updateDownloads(int groupBase, int multiplyFactor);
 
-	// QUESTION: Why not private?
 	//returns true if a version with the given code is found in the list and false otherwise
 	bool findVersion(int);
 
-	// QUESTION: Why not private?
 	//if a version with the given code is found-return a reference to it
 	Version& getVersion(int);
 
-	// TODO: Add definition
+	// TODO: Add description
 	void printTreeDownloads(int versionCode);
 	void printTreeApplications(int versionCode);
 };

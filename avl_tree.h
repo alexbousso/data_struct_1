@@ -14,11 +14,6 @@
 
 using std::cout;
 using std::endl;
-/* TODO: Delete
- #define LARGER 1
- #define SMALLER -1
- #define EQUAL 0
- */
 
 template<typename T, class Compare>
 class AVLTree {
@@ -429,7 +424,6 @@ void AVLTree<T, Compare>::removeSingleChild(
 template<typename T, class Compare>
 bool AVLTree<T, Compare>::findIsIn(T& element) {
 	try {
-		// FIXME: Change the function's name
 		find(element);
 	} catch (DataDoesNotExist& noData) {
 		return false;

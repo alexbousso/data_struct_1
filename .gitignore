@@ -62,3 +62,8 @@ data_struct_1
 
 /Debug
 *.cproject
+/.gitignore~
+/out.txt
+/test1.txt
+/FullTest.txt
+/myout1.txt

@@ -106,10 +106,9 @@ inline int Application::getDownloadCount() const {
 }
 
 inline void Application::increaseDownloads(const int downloadIncrease) {
-	//TODO don't forget me!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*	if (downloadIncrease < 0) {
+	if (downloadIncrease < 0) {
 		throw InvalidInput();
-	}*/
+	}
 	downloadCount += downloadIncrease;
 }
 
