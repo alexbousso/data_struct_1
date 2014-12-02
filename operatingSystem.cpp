@@ -40,6 +40,7 @@ StatusType OS::addVersion(int versionCode) {
 	if (versionCode <= versions[0].getVersionCode()) {
 		return FAILURE;
 	}
+
 	try {
 		Version newVer(versionCode);
 		versions.pushFront(newVer);
@@ -67,9 +68,7 @@ StatusType OS::addApplication(int appID, int versionCode, int downloadCount) {
 		downloads.insert(app);	//add to the OS downloads tree
 	} catch (std::bad_alloc& ba) {
 		return ALLOCATION_ERROR;
-	} /*catch (...) {
-	 //TODO what to do here?!?!? (could catch BadVersionCode)
-	 }*/
+	}
 
 	return SUCCESS;
 }
@@ -217,9 +216,8 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		return INVALID_INPUT;
 	}
 
-//TODO this changed!!!!
 	if (versionCode > 0 && !findVersion(versionCode)) {
-		// TODO: Is this right?
+		// QUESTION: Is this right?
 		//*apps = NULL;
 		//*numOfApps = -1;
 		return FAILURE;
@@ -228,7 +226,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 	if (versionCode > 0 && findVersion(versionCode)
 			&& (getVersion(versionCode).getNumOfApps() == 0)) {
 
-		// TODO: Is this right?
+		// QUESTION: Is this right?
 		*apps = NULL;
 		*numOfApps = 0;
 		return SUCCESS;
@@ -239,7 +237,7 @@ StatusType OS::getAllAppsByDownloads(int versionCode, int **apps,
 		if (downloads.size() == 0) {
 			*numOfApps = 0;
 			*apps = NULL;
-			// TODO: Is this right?
+			// QUESTION: Is this right?
 			return SUCCESS;
 		}
 

@@ -108,8 +108,6 @@ public:
 	AVLTree(Compare func) :
 			root(NULL), treeSize(0), compare(func), max(NULL) {
 	}
-	//AVLTree(const AVLTree&);
-	//TODO is the coptC'tor needed?!?!
 
 	AVLTree operator=(const AVLTree&);
 	~AVLTree();
@@ -226,13 +224,6 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::insert(AVLTree<T, Compare>::AVLNode* currentRoot,
 		const T& element) {
 
-	//TODO is the next code block required?! been taken care of in the casic unsert func!
-	/*if (currentRoot == NULL) {
-	 currentRoot = new AVLNode(element);
-	 treeSize++;
-	 return;
-	 }*/
-
 	if (compare(element, currentRoot->data) > 0) {//if the data is larger then the roots'
 		if (currentRoot->right == NULL) {		//check if the right son is free
 			currentRoot->right = new AVLNode(element); //if it is, then set the right son to be the new node
@@ -293,7 +284,7 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::rotateRight(
 		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
-		//TODO throw exception
+		throw InvalidInput();
 	}
 	currentRoot = currentRoot->left;
 	currentRoot->dad->left = currentRoot->right;
@@ -305,7 +296,6 @@ void AVLTree<T, Compare>::rotateRight(
 	currentRoot->right->dad = currentRoot;
 
 	if (currentRoot->dad != NULL) {	//if there's a dad
-		//TODO check this next line again!! i think it should be  currentRoot->right
 		if (currentRoot->dad->right == currentRoot->right) {//check if we just switched the dad's right son
 			currentRoot->dad->right = currentRoot;
 		} else {	//we must have switched the dads' left son
@@ -321,7 +311,7 @@ template<typename T, class Compare>
 void AVLTree<T, Compare>::rotateLeft(
 		AVLTree<T, Compare>::AVLNode* currentRoot) {
 	if (currentRoot == NULL) {
-		//TODO throw exception
+		throw InvalidInput();
 	}
 	currentRoot = currentRoot->right;
 	currentRoot->dad->right = currentRoot->left;

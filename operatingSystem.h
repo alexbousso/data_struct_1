@@ -42,11 +42,10 @@ public:
 	//upgrades an application to a newer version
 	StatusType upgradeApplication(int appID);
 
-	// TODO: Add description
+	// Returns the application with the highest download count
 	StatusType getTopApp(int versionCode, int* appID);
 
 	//returns all the apps in a specified version by their downloads
-	//TODO any other input needed here? should it be const function?!
 	StatusType getAllAppsByDownloads(int versionCode, int **apps,
 			int *numOfApps);
 
@@ -59,7 +58,7 @@ public:
 	//if a version with the given code is found-return a reference to it
 	Version& getVersion(int);
 
-	// TODO: Add description
+	// Helper functions to print the desired tree
 	void printTreeDownloads(int versionCode);
 	void printTreeApplications(int versionCode);
 };

@@ -38,7 +38,7 @@ public:
 
 	List();
 	List(List&);
-	List operator =(List&);
+//	List operator =(List&);
 	~List();
 
 	// Remove last element from list
@@ -63,7 +63,7 @@ public:
 	// Resets the entire list
 	void reset();
 
-	// TODO: Definition
+	// Prints the list from begin to end
 	void printList();
 
 private:
@@ -124,7 +124,6 @@ inline List<T>::List() :
 	last->previous = NULL;
 }
 
-// FIXME: Check if this is right
 template<typename T>
 inline List<T>::List(List& copy) :
 		first(new List<T>::Node), last(first), listSize(0) {
@@ -133,14 +132,14 @@ inline List<T>::List(List& copy) :
 	}
 }
 
-// FIXME: Check if this is right
-template<typename T>
-List<T> List<T>::operator =(List& copy) {
-	for (List<T>::Iterator it(copy.begin()); it != copy.end(); ++it) {
-		pushBack(*it);
-	}
-	return *this;
-}
+// This is wrong!
+//template<typename T>
+//List<T> List<T>::operator =(List& copy) {
+//	for (List<T>::Iterator it(copy.begin()); it != copy.end(); ++it) {
+//		pushBack(*it);
+//	}
+//	return *this;
+//}
 
 template<typename T>
 inline List<T>::~List() {

@@ -109,7 +109,8 @@ private:
 	int groupBase, multiplyFactor;
 
 	/**
-	 * TODO: Description
+	 * Splits the applications list into two lists: one with all the apps that
+	 * have mod = 0, and the other has the rest.
 	 */
 	void splitBetweenLists(List<Application>& applications) {
 		for (List<Application>::Iterator it(applications.begin());
@@ -122,9 +123,6 @@ private:
 		}
 	}
 
-	/**
-	 * TODO: Description
-	 */
 	void multiplyModuloEqualsZero() {
 		for (List<Application>::Iterator it(moduloEqualsZero.begin());
 				it != moduloEqualsZero.end(); ++it) {
@@ -169,7 +167,7 @@ private:
 	}
 
 	/**
-	 * TODO: Description
+	 * Helper class to the function TreeDownloadsUpdater::pushListToTree()
 	 */
 	class InsertAppsToTree {
 	public:
@@ -187,9 +185,6 @@ private:
 		List<Application>::Iterator it;
 	};
 
-	/**
-	 * TODO: Description
-	 */
 	void pushListToTree() {
 		InsertAppsToTree insertAppsToTree(mergedList);
 		tree.inOrder<InsertAppsToTree>(insertAppsToTree);

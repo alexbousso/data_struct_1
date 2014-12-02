@@ -58,7 +58,6 @@ static bool testAVLTreeInsert() {
 static bool testAVLTreeRemove() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
-	//FIXME what wrong with the line above
 
 	ASSERT_DATA_DOES_NOT_EXIST(tree.remove(2));
 	setUp(tree);
@@ -75,7 +74,6 @@ static bool testAVLTreeRemove() {
 static bool testAVLTreeMin() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
-	//FIXME what wrong with the line above
 
 	setUp(tree);
 
@@ -93,10 +91,8 @@ static bool testAVLTreeMin() {
 static bool testAVLTreeMax() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
-	//FIXME what wrong with the line above
 
 	setUp(tree);
-	//tree.printTree();
 
 	ASSERT_EQUALS(6, tree.getMax());
 	ASSERT_NO_THROW(tree.remove(6));
@@ -104,29 +100,10 @@ static bool testAVLTreeMax() {
 
 	ASSERT_NO_THROW(tree.insert(7));
 	ASSERT_EQUALS(7, tree.getMax());
-	//tree.printTree();
 	ASSERT_NO_THROW(tree.checkTree());
 	return true;
 }
 
-/*
-static bool testAVLTreeFind() {
-	CompareInt func;
-	AVLTree<int, CompareInt> tree(func);
-
-	ASSERT_FALSE(tree.find(42));
-	setUp(tree);
-
-	ASSERT_TRUE(tree.find(3));
-	ASSERT_TRUE(tree.find(2));
-
-	ASSERT_FALSE(tree.find(42));
-	ASSERT_NO_THROW(tree.remove(3));
-	ASSERT_FALSE(tree.find(3));
-
-	return true;
-}
-*/
 static bool testAVLTreeSize() {
 	CompareInt func;
 	AVLTree<int, CompareInt> tree(func);
@@ -135,7 +112,6 @@ static bool testAVLTreeSize() {
 	setUp(tree);
 
 	for (int i(NUMBER_OF_ELEMENTS); i > 2; --i) {
-		//tree.printTree();
 		ASSERT_EQUALS(tree.size(), i);
 		ASSERT_NO_THROW(tree.remove(i));
 	}
@@ -158,7 +134,6 @@ int main() {
 	RUN_TEST(testAVLTreeRemove);
 	RUN_TEST(testAVLTreeMin);
 	RUN_TEST(testAVLTreeMax);
-//	RUN_TEST(testAVLTreeFind);
 	RUN_TEST(testAVLTreeSize);
 
 	return 0;

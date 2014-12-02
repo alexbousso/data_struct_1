@@ -86,7 +86,7 @@ static bool testRemoveApplication() {
 	ASSERT_FAILURE(os.removeApplication(10));
 
 	setUp(os);
-/*
+
 	ASSERT_INVALID_INPUT(os.removeApplication(0));
 
 	ASSERT_FAILURE(os.removeApplication(18));
@@ -101,7 +101,7 @@ static bool testRemoveApplication() {
 	ASSERT_SUCCESS(os.removeApplication(14));
 
 	ASSERT_SUCCESS(os.addApplication(2, 8, 3));
-*/
+
 	return true;
 }
 
